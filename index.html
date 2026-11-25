@@ -1,0 +1,1502 @@
+<!doctype html><html><head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>巧巧營運儀表板</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@300;400;500;600;900&display=swap">
+<style>
+/* Layout concept: one wide column, sticky tab strip, big serif follower count as the hero; soft raspberry-and-plum palette taken from her feed. */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --tint: #fcf5f8;
+  --ink: #2e2530;
+  --muted: #7d7083;
+  --line: #f1e5eb;
+  --accent: #c9356f;
+  --accent-ink: #ffffff;
+  --soft: #fdeaf1;
+  --plum: #6b4a93;
+  --plum-soft: #f2ecf9;
+  --ok: #2b8466;
+  --ok-soft: #e3f4ed;
+  --warn: #a96a0f;
+  --warn-soft: #fbf1dc;
+  --bad: #b83232;
+  --bad-soft: #fbe4e4;
+  --font-display: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 20;
+}
+.qq * { box-sizing: border-box; }
+.qq { padding-block: 0 56px; }
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.top { padding-block: 28px 14px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 24px; }
+.top h1 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; text-wrap: balance; }
+.top p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.top a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.top a:hover { text-decoration: underline; }
+nav.tabs {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 15;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+nav.tabs a {
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+nav.tabs a:hover { color: var(--ink); }
+nav.tabs a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+nav.tabs a:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+main { padding-block: 22px 0; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0 0 10px; text-wrap: balance; }
+h3 { font-size: 16px; margin: 0 0 6px; }
+.lead { color: var(--muted); margin: 0 0 18px; max-width: 68ch; }
+.stack { display: flex; flex-direction: column; gap: 18px; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 22px; min-width: 0; box-shadow: 0 1px 2px rgba(150, 70, 105, 0.04), 0 8px 28px rgba(150, 70, 105, 0.06); }
+.card.flat { background: transparent; border-style: dashed; }
+.hero { background: linear-gradient(135deg, #ffffff 0%, #fdf0f5 100%); display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); align-items: center; }
+@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+.big { font-family: var(--font-display); font-weight: 600; font-size: clamp(56px, 12vw, 92px); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.big small { font-size: 0.32em; color: var(--muted); font-weight: 600; letter-spacing: 0; margin-left: 6px; }
+.label { font-size: 12px; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
+.bar { height: 10px; background: var(--soft); border-radius: 99px; overflow: hidden; margin: 12px 0 6px; }
+.bar > i { display: block; height: 100%; background: linear-gradient(90deg, #eb94b5, var(--accent)); border-radius: 99px; min-width: 4px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px 18px; margin-top: 14px; }
+.stat b { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat span { font-size: 12px; color: var(--muted); }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 99px; background: var(--plum-soft); color: var(--plum); white-space: nowrap; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.acc { background: var(--soft); color: var(--accent); }
+.pill.mute { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr.now td { background: var(--soft); }
+td.num, th.num { text-align: right; }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.muted { color: var(--muted); }
+.card a:not(.btn) { color: var(--accent); }
+.small { font-size: 13px; }
+.note { border-left: 3px solid var(--accent); padding: 8px 14px; background: var(--soft); border-radius: 0 10px 10px 0; font-size: 14px; }
+.note.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.legend i { display: inline-block; width: 22px; height: 0; border-top: 3px solid var(--accent); vertical-align: middle; margin-right: 6px; }
+.legend i.p { border-top: 3px dashed var(--plum); }
+.legend i.g { border-top: 2px dotted var(--muted); }
+svg.chart { width: 100%; height: auto; display: block; }
+svg.chart text { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
+svg.chart .gl { stroke: var(--line); stroke-width: 1; }
+svg.chart .plan { fill: none; stroke: var(--plum); stroke-width: 2.5; stroke-dasharray: 6 5; }
+svg.chart .act { fill: none; stroke: var(--accent); stroke-width: 3; }
+svg.chart .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+svg.chart .goal { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 2 4; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+input, select, textarea {
+  font: inherit;
+  color: var(--ink);
+  background: var(--tint);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 11px;
+  width: 100%;
+  min-width: 0;
+}
+textarea { resize: vertical; min-height: 84px; }
+.form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); align-items: end; }
+.form .wide { grid-column: 1 / -1; }
+.btn {
+  font: inherit;
+  font-weight: 700;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 18px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+}
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+.btn.sm { padding: 5px 11px; font-size: 13px; }
+.btn.danger { color: var(--bad); }
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.cal-head h3 { margin: 0; font-family: var(--font-display); font-size: 20px; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal .dow { font-size: 12px; color: var(--muted); text-align: center; padding: 4px 0; }
+.cal { gap: 8px; }
+.cal .day { min-height: 118px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 6px; min-width: 0; cursor: pointer; }
+.cal .day.off { opacity: 0.5; }
+.cal .day.today { border: 2px solid var(--bad); }
+.cal .day > b { font-size: 15px; font-weight: 700; color: var(--ink); }
+.chip { display: block; width: 100%; text-align: left; font: inherit; font-size: 12px; line-height: 1.4; padding: 7px 8px; border-radius: 9px; border: 0; cursor: pointer; background: var(--soft); color: var(--ink); overflow-wrap: anywhere; }
+.chip .cs { display: block; font-size: 10.5px; line-height: 1.3; color: var(--accent); font-weight: 500; margin-bottom: 3px; }
+.chip.s-草稿 { background: var(--warn-soft); }
+.chip.s-草稿 .cs { color: var(--warn); }
+.chip.s-已發布 { background: var(--ok-soft); }
+.chip.s-已發布 .cs { color: var(--ok); }
+.chip.s-待規劃 { background: transparent; border-radius: 0; border-left: 2px dashed var(--accent); padding-left: 8px; }
+@media (max-width: 640px) { .cal { gap: 4px; } .cal .day { min-height: 70px; padding: 4px; border-radius: 10px; } .cal .day > b { font-size: 12px; } .chip { font-size: 10px; padding: 4px; } .chip .cs { font-size: 9px; } }
+.idea { display: flex; flex-direction: column; gap: 8px; }
+.idea .txt { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
+.idea a { color: var(--accent); overflow-wrap: anywhere; font-size: 13px; }
+.idea.used { opacity: 0.6; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 10px; font-size: 14px; z-index: 30; max-width: calc(100% - 32px); }
+.empty { color: var(--muted); padding: 18px; text-align: center; border: 1px dashed var(--line); border-radius: 12px; font-size: 14px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.phase h3 { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.phase ul { margin: 8px 0 0; padding-left: 18px; }
+.phase li { margin: 3px 0; }
+.url { font-family: ui-monospace, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; background: var(--tint); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.banner { position: sticky; top: 52px; z-index: 14; margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: var(--warn-soft); color: var(--ink); border: 1px solid var(--warn); display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; justify-content: space-between; }
+.banner b { color: var(--warn); }
+.maker { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.pv { position: sticky; top: 72px; }
+@media (max-width: 820px) { .maker { grid-template-columns: minmax(0, 1fr); } .pv { position: static; max-width: 320px; } }
+.scv { width: 100%; height: auto; aspect-ratio: 9 / 16; border-radius: 16px; border: 1px solid var(--line); background: #1a1416; display: block; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; margin-top: 10px; max-height: 260px; overflow-y: auto; }
+.ph { padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--tint); cursor: pointer; aspect-ratio: 9 / 16; }
+.ph.sel { border-color: var(--accent); }
+.ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pimgs { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0; }
+.pimg { position: relative; width: 72px; aspect-ratio: 4 / 5; }
+.pimg img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.pimg .x, .pimg .l { position: absolute; top: 2px; border: 0; width: 22px; height: 22px; border-radius: 99px; background: rgba(36, 27, 34, 0.75); color: #fff; cursor: pointer; line-height: 1; padding: 0; }
+.pimg .x { right: 2px; }
+.pimg .l { left: 2px; }
+.chip .thumb { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; margin-bottom: 6px; }
+.chip.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
+.strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.strip img { height: 280px; width: auto; border-radius: 12px; border: 1px solid var(--line); cursor: zoom-in; flex: 0 0 auto; }
+.box { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--tint); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+.lb { position: fixed; inset: 0; background: rgba(36, 20, 30, 0.85); display: flex; align-items: center; justify-content: center; z-index: 40; padding: 16px; cursor: zoom-out; }
+.lb img { max-width: 100%; max-height: 100%; border-radius: 12px; }
+.tasks { display: flex; flex-direction: column; margin-top: 6px; }
+.tasks label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.tasks label.done span { text-decoration: line-through; color: var(--muted); }
+.tasks input { width: auto; margin-top: 5px; }
+.wgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(220px, 260px)); }
+@media (max-width: 560px) { .wgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.work { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+.work img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 12px; cursor: zoom-in; display: block; }
+.tb { width: 34px; height: 34px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; font: inherit; font-weight: 700; padding: 0; }
+.tb.on { border-color: var(--accent); color: var(--accent); background: var(--soft); }
+.btn.on { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+@media (prefers-reduced-motion: no-preference) { .bar > i { transition: width 0.5s ease; } }
+</style>
+
+<div class="qq">
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <h1>巧巧營運儀表板</h1>
+        <p><a href="https://www.instagram.com/arielchiao_588/" target="_blank" rel="noopener">@arielchiao_588</a>　實驗代操帳號　三個月，913 位粉絲到 5,000 位</p>
+      </div>
+      <div class="muted small" id="who"></div>
+    </header>
+  </div>
+  <nav class="tabs" aria-label="儀表板分頁"><div class="wrap" id="tabs"></div></nav>
+  <div class="wrap"><div id="banner" class="banner" hidden></div><div id="dbstat" class="small muted" style="padding-top:10px"></div><main id="main"></main></div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DATA = {"posts": [{"caption": "薪水一入帳，先分三份再花\n\n很多人月底沒剩，不是賺太少\n是順序錯了：先付完所有帳單，剩多少才想到存\n\n我自己的做法是 631\n6 成生活開銷\n3 成存起來，不動\n1 成先顧保障\n\n薪水 3 萬，一年就能存下 108,000（只算本金）\n比例可以依你的狀況調整，順序不能變：先分配，再花\n\n最常卡住的三個地方，我也整理在圖裡了\n生活費超過 6 成、有高利率的債、年終獎金怎麼分\n\n留言「分配」\n631 月薪分配表私訊給你：1 張表、3 種薪水算好、4 個卡關解法\n\n#薪水分配 #631法則 #小資存錢 #理財起步 #女生理財 #存錢方法", "date": "2026-11-04", "dm": "嗨，我是巧巧🤍\n謝謝你留言「分配」\n\n這是答應你的「631 月薪分配表」\n👉【連結】\n\n1 張表、3 種薪水算好、4 個卡關解法\n照你的薪水填一次，就知道每個月該放哪裡\n\n填完如果卡在哪一格，直接回這則訊息告訴我\n我幫你看怎麼調", "gift": "631 月薪分配表（1 張表、3 種薪水算好、4 個卡關）", "giftStatus": "待做", "images": ["b35f13bc4977615dca7555ec832cd2cd", "5dad5751d7bc1edf8a6f43ad7b6bba88", "1cd388bb23206ea15497ab604a388f85", "52527a16d129f645d61149645e8e50c0", "cbee6a7be7cab8b13f493d29c87977b0", "261bfed9419ac11d3e8043b989a1a3a1", "809b1d8f957fe84d10cfb530d1caf4e5"], "keyword": "分配", "kind": "輪播", "note": "圖已重出 7 頁（C 款 v2：標題改「薪水一入帳，先分三份」、封面加小字、第 2 與第 6 頁換照片）。文案、留言回覆、私訊內容是 Claude 草稿，要巧巧確認。贈品 PDF 還沒做，私訊裡的連結要換成真的。631 的 6/3/1 各是哪三塊，還沒跟巧巧確認。", "path": "代操-巧巧/2026-10-29_1_631薪水切三份_C款/v2", "reply": "收到，分配表已經在你的私訊裡\n傳給你囉，卡住的那一格直接回我\n表傳過去了，先照 631 切一次，看看哪裡卡", "stage": "留言／私訊索取", "status": "已排程", "title": "薪水一入帳，先分三份（631，C 款）", "id": "p-1104"}, {"caption": "女人一定要有錢，要成為自己的女主人\n\n這句話我常講，今天把為什麼講完整\n\n我的帳上也曾經是負的\n那時候薪水一進來先塞窟窿，連受傷都沒人理\n後來我開始自己管錢：把數字攤開、薪水日先轉 10%、連續記帳 30 天\n\n有錢之後最大的差別，不是買更多東西\n是敢說好，也敢說不\n\n如果你還在等加薪、等存款、等條件剛好\n今天先做一件就好\n先把負債寫在一張紙上，或先把薪水日的 10% 轉走\n\n留言「有錢」\n女生理財起步清單私訊給你：8 頁、5 步驟、3 張表、12 題\n\n#女生理財 #理財起步 #經濟獨立 #存錢計畫 #醫療險 #保險規劃 #女人要有錢", "date": "2026-11-10", "dm": "嗨，我是巧巧🤍\n謝謝你留言「有錢」\n\n這是答應你的「女生理財起步清單」\n👉【連結】\n\n8 頁、5 個步驟、3 張表、12 個問題\n負債先從哪裡開始、存錢怎麼撐過一個月、醫療險夠不夠，一步一步排好\n\n先做第一步就好，做完回這則訊息跟我說\n當自己的女主人，從今天算起", "gift": "女生理財起步清單（圖上寫 8 頁、5 步驟、3 張表、12 題）", "giftStatus": "待做", "images": ["cae76bef7a99a832718b53687ea5add7", "0e3670f6d50aa0bdda951b13f877c7d8", "00f1cb1fb77fad05fc73407f630f6967", "95aec1e9f856e48a3ff05448e5fe450a", "e2ada65f83db68e018915c7741962eab", "2a6683a895051e783c58eb3f3157044f", "b0eaa127cea97b79c90e86520a46fc6a", "024a3f8492aa7e4dde6fdcd7c8a7368f", "53440bed3a8dca95013897122d2c1218"], "keyword": "有錢", "kind": "輪播", "note": "圖已出 9 頁。文案、留言回覆、私訊內容是 Claude 草稿，要巧巧確認。圖上第 5 頁寫「年收三百」，跟她全職協理的身分對不上，發前要確認。贈品規格以圖上為準：8 頁、5 步驟、3 張表、12 題，PDF 還沒做。內文提到負債經歷，要先確認巧巧同意公開。", "path": "代操-巧巧/2026-10-29_2_女主人_D款", "reply": "清單已經在你的私訊裡，從第一步開始\n傳給你囉，做到哪一步回我\n收到，起步清單在私訊裡", "stage": "建立信任", "status": "已排程", "title": "女人一定要有錢，成為自己的女主人（D 款）", "id": "p-1110"}, {"date": "2026-11-19", "gift": "", "giftStatus": "待做", "keyword": "", "kind": "輪播", "note": "已排入發佈。題目還沒定，要在 11/19 前確定。候選：20 歲每月三千滾出錢（只算本金，數字要算過）。靈感：靈感收件匣的「月薪 4 萬存不住」。形式待定。", "path": "", "stage": "吸引注意", "status": "已排程", "title": "（題目待定）", "id": "p-1119"}, {"date": "2026-11-26", "gift": "", "giftStatus": "待做", "keyword": "", "kind": "輪播", "note": "已排入發佈。題目還沒定，要在 11/26 前確定。候選：30 歲一定要有錢，或看到喜歡的東西不用看別人眼色。形式待定。", "path": "", "stage": "建立信任", "status": "已排程", "title": "（題目待定）", "id": "p-1126"}, {"date": "2026-12-01", "gift": "", "giftStatus": "待做", "keyword": "", "kind": "輪播", "note": "已排入發佈。題目還沒定，要在 12/1 前確定。候選：年底盤點（靈感：靈感收件匣的「年底一定做的 5 件事」），或有錢但不摳、一年去兩個國家。形式待定。", "path": "", "stage": "留言／私訊索取", "status": "已排程", "title": "（題目待定）", "id": "p-1201"}], "ideas": [{"by": null, "createdAt": "2026-10-30T09:00:03.000Z", "from": "@ling._.57", "text": "星座圖文：同樣是牡羊座，出生日期不同個性差很多。結尾請大家留言出生日期，看自己是哪一型。頁面顯示讚約 1,569、留言約 70。", "type": "圖文靈感", "url": "https://www.instagram.com/p/DeGe43BIK2-/", "use": "互動方式可以借：留言報一個數字（領薪日、月薪區間）就能對號入座。這是我的建議，不是巧巧指定的。", "used": false, "id": "seed-i1"}, {"by": null, "createdAt": "2026-10-30T09:00:02.000Z", "from": "@riarose_lestyle", "text": "「2026 只剩不到 90 天」。30 歲以後每年年底一定做的 5 件事：盤點存款和投資部位、保單健診、列出一定要花的錢、檢查今年有沒有達標、把它寫下來放在每天看得到的地方。頁面顯示讚約 797、留言 18。", "type": "Reels 靈感", "url": "https://www.instagram.com/reel/DezMYJsJlnw/", "use": "年底盤點主題（計畫第 8 週）。我們的版本要自己重寫、加巧巧的故事，引用要標 @riarose_lestyle。", "used": false, "id": "seed-i2"}, {"by": null, "createdAt": "2026-10-30T09:00:01.000Z", "from": "@missrose_life", "text": "月薪 4 萬，為什麼工作好幾年存款沒增加？列 5 件上班族必懂的事，結尾送《上班族現金流健檢表》，留言「A／B／C／D＋健檢」索取，並邀請預約免費初步財務諮詢。頁面顯示讚約 268。", "type": "圖文靈感", "url": "https://www.instagram.com/p/Deq_LXkkpR3/", "use": "結構和巧巧的「口令加諮詢表單」同型。選 A／B／C／D 再加口令，讓留言更好開口。", "used": false, "id": "seed-i3"}, {"by": null, "createdAt": "2026-10-30T09:00:06.000Z", "from": "@davina__588（限動）", "text": "咖啡與筆電的俯拍照片滿版，文字分成幾小段、每段貼半透明底框，放在畫面中下方。最後用對話框形式寫「客戶：…／我：…」，再貼一張「選對人很重要」的貼紙。", "type": "限動排版", "url": "", "use": "", "used": false, "id": "seed-l1"}, {"by": null, "createdAt": "2026-10-30T09:00:05.000Z", "from": "@davina__588（限動）", "text": "「傳統業務 vs 個人品牌」左右兩欄對照，三列，每列一句大標加兩行小字，底部一句結論金句。淺灰底、深色大標、橘棕色重點字。", "type": "限動排版", "url": "", "use": "", "used": false, "id": "seed-l2"}, {"by": null, "createdAt": "2026-10-30T09:00:04.000Z", "from": "@qmi.life57_588（限動）", "text": "「A NEW DAY」暖光晨景的照片滿版，英文大標加中文小段金句置中，底部有品牌欄「理財能量充電站」。整體暗暖調。", "type": "限動排版", "url": "", "use": "", "used": false, "id": "seed-l3"}], "followers": [{"date": "2026-10-30", "count": 913, "note": "起始粉絲數", "id": "2026-10-30"}, {"date": "2026-11-25", "count": 930, "note": "補記；線上 Artifact 從 10/30 後未再寫入", "id": "2026-11-25"}], "stories": [{"align": "靠左", "batch": "2026-10-30", "big": ["女人一定要有錢", "要成為自己的女主人"], "by": null, "createdAt": "2026-10-30T10:00:01.000Z", "handle": "@arielchiao_588", "imageId": "f666963088a4288b8995e4e254e44a9f", "layout": "照片金句", "photoId": "5cb8677597c491423a9c174c75982d8a", "small": ["不是為了炫耀", "是想說不的時候，說得出口"], "source": "", "top": 8, "id": "v3-1030-1"}, {"align": "靠左", "batch": "2026-10-30", "big": ["勞退自提"], "by": null, "cmp": {"cb-1a": "上限", "cb-1b": "薪資的 6%", "cb-2a": "好處", "cb-2b": "自提的錢，報稅可扣除", "cb-3a": "怎麼辦", "cb-3b": "跟人資說，8 月起公司不能拒絕", "cb-cta": "收藏起來，發薪日前看一次", "cb-foot": "本資訊僅供參考，實際稅額依個人所得而定／勞退規定以勞動部公告為準", "cb-h": "三件事先知道", "cb-l1": "月薪", "cb-l2": "NT$40,000", "cb-label": "", "cb-note": "一年 28,800 元，報稅時可從所得扣除", "cb-r1": "自提 6%", "cb-r2": "NT$2,400／月", "cb-sub": "現在多存一點，是送給 60 歲的自己。", "cb-title": "勞退自提"}, "createdAt": "2026-10-30T10:00:02.000Z", "handle": "@arielchiao_588", "imageId": "2695090fcb30acfcec4309830dce456a", "layout": "保障卡", "photoId": null, "small": [], "source": "", "top": 0, "id": "v3-1030-2"}, {"align": "靠左", "batch": "2026-10-30", "big": ["曾經我也想靠別人", "卻跌了一大跤"], "by": null, "createdAt": "2026-10-30T10:00:03.000Z", "handle": "@arielchiao_588", "imageId": "0ed15a4fff9a052b2ed8e31aca8dd5f9", "layout": "照片金句", "photoId": "ebcb1a7ebe9c96b7393e7de288fa3dd6", "small": ["後來我開始自己管錢", "一步一步，從負債走到今天"], "source": "", "top": 66, "id": "v3-1030-3"}, {"align": "靠左", "batch": "2026-10-30", "big": ["先花再存 vs 先分配再花"], "by": null, "cmp": {"cp-end": "存錢不是叫你什麼都不買／是先決定哪些錢一定要留／再把剩下的花得開心", "cp-label": "", "cp-ls": "靠意志力", "cp-lt": "先花再存", "cp-r1a": "薪水進來／先付帳單", "cp-r1b": "剩多少再想存／到月底才發現沒剩", "cp-r1c": "薪水一入帳／先分三份", "cp-r1d": "6 成生活、3 成存起來／1 成先顧保障", "cp-r2a": "靠意志力／每月提醒自己存", "cp-r2b": "想到才存／忙起來就忘", "cp-r2c": "靠設定／發薪日自動轉帳", "cp-r2d": "錢沒看到／就不會花掉", "cp-r3a": "保障等以後／有錢再補", "cp-r3b": "出事了才發現不夠", "cp-r3c": "保障先固定扣／當它不存在", "cp-r3d": "一場病不會把你／打回原點", "cp-rs": "讓錢自己到位", "cp-rt": "先分配再花"}, "createdAt": "2026-10-30T10:00:04.000Z", "handle": "@arielchiao_588", "imageId": "38b901052e8e85a90d3c5aa828ec5d69", "layout": "文字對照", "photoId": null, "small": [], "source": "", "top": 0, "id": "v3-1030-4"}, {"align": "靠左", "batch": "2026-10-31", "big": ["你是我保戶", "所以我保護你"], "by": null, "changed": "大標改成「你是我保戶，所以我保護你」", "createdAt": "2026-10-30T11:00:01.000Z", "handle": "@arielchiao_588", "imageId": "2acddd551bf99335d453853f854a16ed", "layout": "照片金句", "photoId": "db9023863410bdb244c4103e3d474d4a", "small": ["繳了錢，就該有人幫你顧", "出事的時候，我接電話"], "source": "", "top": 6, "updatedAt": "2026-11-02", "updatedBy": "Claude", "id": "v3-1031-1"}, {"align": "靠左", "batch": "2026-10-31", "big": ["信用卡循環利息"], "by": null, "cmp": {"cb-1a": "循環", "cb-1b": "只繳最低，剩下的算利息", "cb-2a": "分期", "cb-2b": "0 利率也要看手續費和回饋", "cb-3a": "先做", "cb-3b": "能全額繳清，就全額繳清", "cb-cta": "收藏起來，下次刷卡前看一次", "cb-foot": "本資訊僅供參考，實際利率與手續費／以發卡銀行公告為準", "cb-h": "三件事先知道", "cb-l1": "欠款", "cb-l2": "NT$10,000", "cb-label": "", "cb-note": "循環利率法定上限　年利率 15%", "cb-r1": "一年利息最高約", "cb-r2": "NT$1,500", "cb-sub": "欠著不繳清，利息會一直滾。", "cb-title": "信用卡循環利息"}, "createdAt": "2026-10-30T11:00:02.000Z", "handle": "@arielchiao_588", "imageId": "b2bac02a4d4a62797a32c349df2adeb6", "layout": "保障卡", "photoId": null, "small": [], "source": "", "taste": "no", "top": 0, "id": "v3-1031-2"}, {"align": "靠左", "batch": "2026-10-31", "big": ["愛玩，也存得下來"], "by": null, "createdAt": "2026-10-30T11:00:03.000Z", "handle": "@arielchiao_588", "imageId": "a3eb65c140dda21735f483cb66139387", "layout": "照片金句", "photoId": "d44588ca0f832dfc57c7dde3f2993b63", "small": ["一年去兩個國家", "月底也不心慌"], "source": "", "taste": "like", "top": 6, "id": "v3-1031-3"}, {"align": "靠左", "batch": "2026-10-31", "big": ["這三種時刻"], "by": null, "cmp": {"cl-1a": "月底不太敢點開網銀", "cl-1b": "", "cl-2a": "想買大東西，先問別人", "cl-2b": "", "cl-3a": "生病了，不敢請假", "cl-3b": "", "cl-end": "卡住的不是你／是錢還不夠讓你做決定", "cl-label": "", "cl-title": "這三種時刻／你有過嗎"}, "createdAt": "2026-10-30T11:00:04.000Z", "handle": "@arielchiao_588", "imageId": "38ed200ca6f15fbd57675252fc68ef3c", "layout": "清單卡", "photoId": null, "small": [], "source": "", "taste": "like", "top": 0, "id": "v3-1031-4"}, {"align": "靠左", "batch": "2026-11-01", "big": ["做得久", "比衝得快重要"], "by": null, "createdAt": "2026-10-30T11:01:01.000Z", "handle": "@arielchiao_588", "imageId": "69efc21fbac813c26b79c4f2c438ac2c", "layout": "照片金句", "photoId": "85a092e671f0ecc315aa8a5c7e24c63e", "small": ["午睡、運動、好好吃飯", "錢也一樣，固定比用力重要"], "source": "", "taste": "ok", "top": 6, "id": "v3-1101-1"}, {"align": "靠左", "batch": "2026-11-01", "big": ["勞保老年年金"], "by": null, "cmp": {"cb-1a": "年資", "cb-1b": "滿 15 年，可選月領或一次領", "cb-2a": "延後", "cb-2b": "每年多領 4%，最多多 20%", "cb-3a": "提醒", "cb-3b": "勞退自提，把自己那份補上", "cb-cta": "收藏起來，轉給同事看看", "cb-foot": "本資訊僅供參考，實際給付／以勞保局公告為準", "cb-h": "先知道這三件事", "cb-l1": "2026 年起", "cb-l2": "65 歲", "cb-label": "", "cb-note": "最多提早 5 年，少領 20%", "cb-r1": "提早領", "cb-r2": "每年少 4%", "cb-sub": "勞保很重要，但別只靠它。", "cb-title": "勞保老年年金"}, "createdAt": "2026-10-30T11:01:02.000Z", "handle": "@arielchiao_588", "imageId": "23818684fc366728117d64d1d1a2d7ec", "layout": "保障卡", "photoId": null, "small": [], "source": "", "taste": "no", "top": 0, "id": "v3-1101-2"}, {"align": "靠左", "batch": "2026-11-01", "big": ["我的安全感", "不是誰給的", "是自己存的"], "by": null, "createdAt": "2026-10-30T11:01:03.000Z", "handle": "@arielchiao_588", "imageId": "9704aa7a9c163ff9aa53c0c3ec1afa77", "layout": "照片金句", "photoId": "6e8013925bbcbd59afbb29faca05aed1", "small": ["一筆一筆，存在自己手上"], "source": "", "taste": "like", "top": 66, "id": "v3-1101-3"}, {"align": "靠左", "batch": "2026-11-01", "big": ["108,000"], "by": null, "cmp": {"cn-b1": "每個月存 9,000", "cn-b2": "只算本金", "cn-b3": "比例可以依狀況調整", "cn-cap": "薪水 3 萬／一年存下", "cn-end": "先分配／再花", "cn-label": "", "cn-num": "108,000"}, "createdAt": "2026-10-30T11:01:04.000Z", "handle": "@arielchiao_588", "imageId": "df0d637230b8d0a40e3de4913021341e", "layout": "數字卡", "photoId": null, "small": [], "source": "", "taste": "no", "top": 0, "id": "v3-1101-4"}, {"align": "靠左", "batch": "2026-11-02", "big": ["我的人生不令人滿意", "所以我創造了我的人生"], "by": null, "createdAt": "2026-10-30T11:02:01.000Z", "handle": "@arielchiao_588", "imageId": "45f08d73b60ebb5df1bd36e2f12e9233", "layout": "照片金句", "photoId": "dfe2a00188bcec0dc9cbc8fede9ceccd", "posted": "2026-11-02", "small": [], "source": "香奈兒", "taste": "ok", "top": 6, "id": "v3-1102-1"}, {"align": "靠左", "batch": "2026-11-02", "big": ["定期定額"], "by": null, "cmp": {"cb-1a": "日期", "cb-1b": "固定一天，發薪日後最好", "cb-2a": "金額", "cb-2b": "先從負擔得起的開始", "cb-3a": "心態", "cb-3b": "不用猜時間點，慢慢累積", "cb-cta": "收藏起來，發薪日前看一次", "cb-foot": "投資有風險，過去績效不代表未來／本資訊僅供參考，非投資建議", "cb-h": "三個重點", "cb-l1": "每月投入", "cb-l2": "NT$3,000", "cb-label": "", "cb-note": "只算投入金額，不代表報酬", "cb-r1": "一年投入", "cb-r2": "NT$36,000", "cb-sub": "不用猜哪天買，每個月固定一天就好。", "cb-title": "定期定額"}, "createdAt": "2026-10-30T11:02:02.000Z", "handle": "@arielchiao_588", "imageId": "83435f6ef34e017f1db9ecfa4114debc", "layout": "保障卡", "photoId": null, "small": [], "source": "", "taste": "no", "top": 0, "id": "v3-1102-2"}, {"align": "靠左", "batch": "2026-11-02", "big": ["看到喜歡的東西", "不用看別人眼色"], "by": null, "createdAt": "2026-10-30T11:02:03.000Z", "handle": "@arielchiao_588", "imageId": "732eb4554dd51e838bc0afbb29a63297", "layout": "照片金句", "photoId": "f0215a93b7c6a0896d2bb5ddae0b921e", "small": ["先存好自己的那份", "想買的時候，就買得起"], "source": "", "taste": "like", "top": 6, "id": "v3-1102-3"}, {"align": "靠左", "batch": "2026-11-02", "big": ["今天就能做的"], "by": null, "cmp": {"cl-1a": "把負債寫在一張紙上", "cl-1b": "", "cl-2a": "薪水日先轉 10%", "cl-2b": "", "cl-3a": "連續記帳 30 天", "cl-3b": "", "cl-end": "不用一次做完／今天先做一件就好", "cl-label": "", "cl-title": "今天就能做的／第一步"}, "createdAt": "2026-10-30T11:02:04.000Z", "handle": "@arielchiao_588", "imageId": "abaee9064e5f087084379bc0b00b57f8", "layout": "清單卡", "photoId": null, "small": [], "source": "", "taste": "like", "top": 0, "id": "v3-1102-4"}], "photos": [{"id": "bg-06", "kind": "背景", "name": "窗邊毛衣"}, {"id": "bg-09", "kind": "背景", "name": "咖啡書本平拍"}, {"id": "bg-12", "kind": "背景", "name": "海邊奔跑"}, {"id": "bg-14", "kind": "背景", "name": "白紗飄動"}, {"id": "bg-19", "kind": "背景", "name": "金色海浪"}, {"id": "bg-28", "kind": "背景", "name": "海浪"}, {"id": "bg-34", "kind": "背景", "name": "夕陽沙灘"}, {"id": "bg-38", "kind": "背景", "name": "深藍天空草原"}, {"id": "bg-41", "kind": "背景", "name": "咖啡暖光"}, {"id": "bg-49", "kind": "背景", "name": "暖色書桌"}, {"id": "bg-52", "kind": "背景", "name": "紅色戲院座椅"}, {"id": "bg-55", "kind": "背景", "name": "夕陽海邊"}, {"id": "bg-57", "kind": "背景", "name": "黃色老爺車"}, {"id": "bg-59", "kind": "背景", "name": "山丘舞動"}, {"id": "bg-60", "kind": "背景", "name": "地毯閱讀"}, {"id": "bg-77", "kind": "背景", "name": "黃昏草地"}, {"id": "bg-80", "kind": "背景", "name": "金黃草地"}, {"id": "bgv3-25", "kind": "背景", "name": "草地捧花"}, {"id": "bgv3-39", "kind": "背景", "name": "巴黎列車窗"}, {"id": "bgv3-5", "kind": "背景", "name": "跳上電車"}, {"id": "bgv3-62", "kind": "背景", "name": "咖啡館毛衣女子"}, {"id": "bgv3-70", "kind": "背景", "name": "秋日相機"}, {"id": "bgv3-72", "kind": "背景", "name": "樓梯向上"}, {"id": "bgv3-73", "kind": "背景", "name": "黃昏海邊仰望"}, {"id": "bgv3-74", "kind": "背景", "name": "手機特寫"}, {"id": "bgv5-cafe", "kind": "背景", "name": "咖啡館看書"}, {"id": "bgv5-paris", "kind": "背景", "name": "巴黎夕陽"}, {"id": "bgv5-rug", "kind": "背景", "name": "地毯看書"}, {"id": "bgv5-window", "kind": "背景", "name": "窗邊毛衣"}, {"id": "qq-01", "kind": "巧巧", "name": "白襯衫室內正面微笑"}, {"id": "qq-02", "kind": "巧巧", "name": "白襯衫室內托腮"}, {"id": "qq-03", "kind": "巧巧", "name": "白襯衫室內正面"}, {"id": "qq-04", "kind": "巧巧", "name": "港邊墨鏡側臉"}, {"id": "qq-05", "kind": "巧巧", "name": "港邊白T正面"}, {"id": "qq-06", "kind": "巧巧", "name": "夜拍捧花粉色上衣"}, {"id": "qq-07", "kind": "巧巧", "name": "窗邊拿盒子"}], "settings": {"baseDate": "2026-10-30", "baseFollowers": 913, "formResponses": 1, "formResponsesAt": "2026-10-30", "goal": 5000, "goalDate": "2027-01-30"}, "reviews": [], "quotes": [], "requests": [], "_meta": {"updatedAt": "2026-11-25T16:13:08+08:00", "account": "arielchiao_588"}};
+const ASSET_MAP = {"f666963088a4288b8995e4e254e44a9f": "assets/stories/v3-1030-1.jpg", "2695090fcb30acfcec4309830dce456a": "assets/stories/v3-1030-2.jpg", "0ed15a4fff9a052b2ed8e31aca8dd5f9": "assets/stories/v3-1030-3.jpg", "38b901052e8e85a90d3c5aa828ec5d69": "assets/stories/v3-1030-4.jpg", "2acddd551bf99335d453853f854a16ed": "assets/stories/v3-1031-1.jpg", "b2bac02a4d4a62797a32c349df2adeb6": "assets/stories/v3-1031-2.jpg", "a3eb65c140dda21735f483cb66139387": "assets/stories/v3-1031-3.jpg", "38ed200ca6f15fbd57675252fc68ef3c": "assets/stories/v3-1031-4.jpg", "69efc21fbac813c26b79c4f2c438ac2c": "assets/stories/v3-1101-1.jpg", "23818684fc366728117d64d1d1a2d7ec": "assets/stories/v3-1101-2.jpg", "9704aa7a9c163ff9aa53c0c3ec1afa77": "assets/stories/v3-1101-3.jpg", "df0d637230b8d0a40e3de4913021341e": "assets/stories/v3-1101-4.jpg", "45f08d73b60ebb5df1bd36e2f12e9233": "assets/stories/v3-1102-1.jpg", "83435f6ef34e017f1db9ecfa4114debc": "assets/stories/v3-1102-2.jpg", "732eb4554dd51e838bc0afbb29a63297": "assets/stories/v3-1102-3.jpg", "abaee9064e5f087084379bc0b00b57f8": "assets/stories/v3-1102-4.jpg", "b35f13bc4977615dca7555ec832cd2cd": "assets/posts/p-1104-01.jpg", "5dad5751d7bc1edf8a6f43ad7b6bba88": "assets/posts/p-1104-02.jpg", "1cd388bb23206ea15497ab604a388f85": "assets/posts/p-1104-03.jpg", "52527a16d129f645d61149645e8e50c0": "assets/posts/p-1104-04.jpg", "cbee6a7be7cab8b13f493d29c87977b0": "assets/posts/p-1104-05.jpg", "261bfed9419ac11d3e8043b989a1a3a1": "assets/posts/p-1104-06.jpg", "809b1d8f957fe84d10cfb530d1caf4e5": "assets/posts/p-1104-07.jpg", "cae76bef7a99a832718b53687ea5add7": "assets/posts/p-1110-01.jpg", "0e3670f6d50aa0bdda951b13f877c7d8": "assets/posts/p-1110-02.jpg", "00f1cb1fb77fad05fc73407f630f6967": "assets/posts/p-1110-03.jpg", "95aec1e9f856e48a3ff05448e5fe450a": "assets/posts/p-1110-04.jpg", "e2ada65f83db68e018915c7741962eab": "assets/posts/p-1110-05.jpg", "2a6683a895051e783c58eb3f3157044f": "assets/posts/p-1110-06.jpg", "b0eaa127cea97b79c90e86520a46fc6a": "assets/posts/p-1110-07.jpg", "024a3f8492aa7e4dde6fdcd7c8a7368f": "assets/posts/p-1110-08.jpg", "53440bed3a8dca95013897122d2c1218": "assets/posts/p-1110-09.jpg"};
+var SNAP = DATA; /*SNAPSHOT*/
+(function () {
+  "use strict";
+
+  var TABS = [
+    ["overview", "總覽"], ["story", "限動金句"], ["plan", "漲粉計畫"], ["calendar", "排程月曆"],
+    ["review", "IG 覆盤"], ["ideas", "靈感收件匣"], ["form", "諮詢表單"]
+  ];
+  var DEF = { base: 913, baseDate: "2026-10-30", goal: 5000, goalDate: "2027-01-30" };
+  var FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfcx83iQCiFGq7IhfGPywwZVejW-C_LZ_Jj73n3mEamPosEQg/viewform";
+  var FORM_EDIT = "https://docs.google.com/forms/d/1NVDv0JwWcHSPAzZOLrYFKhNS7LeRMk25rgrf_XmXzlQ/edit#responses";
+
+  var PLAN = [
+    { n: 1, s: "2026-11-02", e: "2026-11-08", t: 950, f: "首頁定稿、確認三條內容線、631 輪播上線（11/4）" },
+    { n: 2, s: "2026-11-09", e: "2026-11-15", t: 1010, f: "女主人輪播上線（11/10）、補第一支 Reels" },
+    { n: 3, s: "2026-11-16", e: "2026-11-22", t: 1090, f: "第一次覆盤，留下數據最好的一種版型" },
+    { n: 4, s: "2026-11-23", e: "2026-11-29", t: 1200, f: "檢查點一：11/29 要到 1,200" },
+    { n: 5, s: "2026-11-30", e: "2026-12-06", t: 1380, f: "放大有效的：Reels 每週 2 支開始" },
+    { n: 6, s: "2026-12-07", e: "2026-12-13", t: 1640, f: "找 3 到 5 個同溫層帳號互相合作" },
+    { n: 7, s: "2026-12-14", e: "2026-12-20", t: 1980, f: "檢查點二：12/20 要到 2,000" },
+    { n: 8, s: "2026-12-21", e: "2026-12-27", t: 2400, f: "年底盤點主題（保單健診、存款盤點）" },
+    { n: 9, s: "2026-12-28", e: "2027-01-03", t: 2900, f: "跨年主題，留言互動鉤子加強" },
+    { n: 10, s: "2027-01-04", e: "2027-01-10", t: 3450, f: "檢查點三：1/10 要到 3,450，決定要不要投廣告" },
+    { n: 11, s: "2027-01-11", e: "2027-01-17", t: 4000, f: "30 天存錢挑戰開跑" },
+    { n: 12, s: "2027-01-18", e: "2027-01-24", t: 4550, f: "集中推數據最好的一支 Reels" },
+    { n: 13, s: "2027-01-25", e: "2027-01-31", t: 5000, f: "衝刺與收尾，整理三個月做法" }
+  ];
+
+  var PHASES = [
+    { name: "地基", range: "11/2 到 11/29", goal: "913 到 1,200", items: [
+      "首頁定稿：名稱、簡介、置頂三則、精選動態封面",
+      "內容定調成三條線：輪播、Reels、限動金句，主軸是「女人要有自己的選擇權、愛理財，也玩得開心」",
+      "每則輪播的口令都接到諮詢表單，先把「留言口令、私訊贈品、填表預約」跑通",
+      "每週一記粉絲數，每則貼文記觸及、收藏、分享、口令數",
+      "補齊兩份贈品 PDF（631 月薪分配表、女生理財起步清單）"
+    ] },
+    { name: "放大有效的", range: "11/30 到 1/3", goal: "1,200 到 2,900", items: [
+      "看第一階段數據，只留收藏和分享最高的兩種版型，其餘停做",
+      "Reels 每週至少 2 支，她的帳號過去幾乎都發 Reels，輪播負責轉換和收藏",
+      "把靈感收件匣的題目改寫成她的版本，引用的帳號要標名",
+      "找 3 到 5 個同溫層帳號做聯名輪播或互相提及",
+      "加入留言互動鉤子，讓人一看就想回覆（例如選 A／B／C／D、報生日對號入座）"
+    ] },
+    { name: "衝刺", range: "1/4 到 1/31", goal: "2,900 到 5,000", items: [
+      "年度復盤、新年理財檢查，借年初大家想重新開始的心情",
+      "30 天存錢挑戰，用留言口令報名，每週在限動更新",
+      "把數據最好的一支 Reels 集中加強，是否投廣告要由妞和巧巧決定預算",
+      "整理三個月做法，沉澱成可複製給其他代操帳號的流程"
+    ] }
+  ];
+
+  var S = {
+    db: null, uid: null, canWrite: null, noDb: false,
+    cfgDoc: null, posts: [], ideas: [], reviews: [], followers: [], quotes: [], photos: [], stories: [], requests: [], errs: [], live: {}, perm: null, assets: null, dl: null,
+    tab: "overview", cal: { y: 2026, m: 10 }, editing: null, loaded: {}
+  };
+  var view = { update: function () {} };
+  var $main = document.getElementById("main");
+
+  /* ---------- helpers ---------- */
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function P(s) { var a = String(s).split("-"); return new Date(+a[0], +a[1] - 1, +a[2]); }
+  function I(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function DD(a, b) { return Math.round((P(b) - P(a)) / 864e5); }
+  var WK = ["日", "一", "二", "三", "四", "五", "六"];
+  function today() { return I(new Date()); }
+  function md(s) { var d = P(s); return (d.getMonth() + 1) + "/" + d.getDate(); }
+  function wd(s) { return "週" + WK[P(s).getDay()]; }
+  function num(n) { return (n == null || isNaN(n)) ? "—" : Math.round(n).toLocaleString("en-US"); }
+  function cfg() {
+    var c = S.cfgDoc || {};
+    return {
+      base: c.baseFollowers != null ? c.baseFollowers : DEF.base,
+      baseDate: c.baseDate || DEF.baseDate,
+      goal: c.goal != null ? c.goal : DEF.goal,
+      goalDate: c.goalDate || DEF.goalDate,
+      formResponses: c.formResponses,
+      formResponsesAt: c.formResponsesAt,
+      bookings: c.bookings
+    };
+  }
+  function add(el, c) {
+    if (c == null || c === false) return;
+    if (Array.isArray(c)) { c.forEach(function (x) { add(el, x); }); return; }
+    el.appendChild(typeof c === "object" ? c : document.createTextNode(String(c)));
+  }
+  function h(tag, props) {
+    var el = document.createElement(tag);
+    props = props || {};
+    for (var k in props) {
+      var v = props[k];
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v;
+      else if (k === "text") el.textContent = v;
+      else if (k.slice(0, 2) === "on") el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (var i = 2; i < arguments.length; i++) add(el, arguments[i]);
+    return el;
+  }
+  function svg(tag, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function field(id, label, control, cls) {
+    return h("div", { class: "field" + (cls ? " " + cls : "") }, h("label", { for: id, text: label }), control);
+  }
+  function input(id, type, ph) { return h("input", { id: id, type: type || "text", placeholder: ph || "", autocomplete: "off" }); }
+  function select(id, opts) {
+    var s = h("select", { id: id });
+    opts.forEach(function (o) { s.appendChild(h("option", { value: o, text: o })); });
+    return s;
+  }
+  function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ""; }
+  function setVal(id, v) { var e = document.getElementById(id); if (e) e.value = v == null ? "" : v; }
+  function numOrNull(id) { var v = val(id); if (v === "") return null; var n = Number(v); return isNaN(n) ? null : n; }
+  var toastTimer = null;
+  function toast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 7000);
+  }
+  function guard() {
+    toast("這是自動更新的線上頁，只能看。粉絲數每天早上會自己寫入，不用在這頁記。"); return false;
+    if (S.canWrite === false) { toast("你的權限只能看，不能改資料"); return false; }
+    return true;
+  }
+  function fail(e) {
+    var c = e && e.code;
+    toast(c === "quota_exceeded" ? "資料已滿，請先刪掉一些舊資料" : c === "invalid_argument" ? "沒有儲存，可能權限不足" : "儲存失敗，請再試一次");
+  }
+  function armDelete(btn, run) {
+    var armed = false, timer;
+    btn.addEventListener("click", function () {
+      if (!armed) {
+        armed = true; var old = btn.textContent; btn.textContent = "再按一次刪除";
+        timer = setTimeout(function () { armed = false; btn.textContent = old; }, 3000);
+        return;
+      }
+      clearTimeout(timer); run();
+    });
+  }
+  function copy(text) {
+    function fallback() {
+      var t = h("textarea", { style: "position:fixed;opacity:0" }); t.value = text; document.body.appendChild(t);
+      t.select(); try { document.execCommand("copy"); toast("已複製"); } catch (e) { toast("請手動選取複製"); }
+      t.remove();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast("已複製"); }, fallback);
+    } else fallback();
+  }
+  function srcLabel(url) {
+    var m = /instagram\.com\/(p|reel|reels)\/([\w-]+)/.exec(url || "");
+    return m ? (m[1] === "p" ? "IG 貼文 " : "IG Reels ") + m[2] : (url || "").replace(/^https?:\/\//, "").slice(0, 40);
+  }
+
+  /* ---------- derived numbers ---------- */
+  function fsorted() { return S.followers.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }); }
+  function curFollowers() { var a = fsorted(); return a.length ? a[a.length - 1] : { date: cfg().baseDate, count: cfg().base }; }
+  function planPoints() {
+    var c = cfg(), pts = [{ date: c.baseDate, count: c.base }];
+    PLAN.forEach(function (w) { pts.push({ date: w.e, count: w.t }); });
+    return pts;
+  }
+  function planAt(date) {
+    var pts = planPoints();
+    if (date <= pts[0].date) return pts[0].count;
+    for (var i = 1; i < pts.length; i++) {
+      if (date <= pts[i].date) {
+        var a = pts[i - 1], b = pts[i], f = DD(a.date, date) / DD(a.date, b.date);
+        return a.count + (b.count - a.count) * f;
+      }
+    }
+    return pts[pts.length - 1].count;
+  }
+
+  /* ---------- chart ---------- */
+  function drawChart(host) {
+    host.textContent = "";
+    var c = cfg(), W = 640, H = 280, L = 46, R = 16, T = 14, B = 30;
+    var total = Math.max(1, DD(c.baseDate, c.goalDate)), ymax = Math.ceil((c.goal * 1.06) / 1000) * 1000;
+    function X(d) { return L + (Math.max(0, DD(c.baseDate, d)) / total) * (W - L - R); }
+    function Y(v) { return T + (1 - v / ymax) * (H - T - B); }
+    var s = svg("svg", { class: "chart", viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "粉絲數：實際與計畫" });
+    for (var v = 0; v <= ymax; v += 1000) {
+      s.appendChild(svg("line", { class: "gl", x1: L, x2: W - R, y1: Y(v), y2: Y(v) }));
+      var t = svg("text", { x: L - 8, y: Y(v) + 4, "text-anchor": "end" }); t.textContent = v.toLocaleString("en-US"); s.appendChild(t);
+    }
+    [["2026-11-01", "11/1"], ["2026-12-01", "12/1"], ["2027-01-01", "1/1"], [c.goalDate, md(c.goalDate)]].forEach(function (m) {
+      var tx = svg("text", { x: X(m[0]), y: H - 8, "text-anchor": "middle" }); tx.textContent = m[1]; s.appendChild(tx);
+    });
+    s.appendChild(svg("line", { class: "goal", x1: L, x2: W - R, y1: Y(c.goal), y2: Y(c.goal) }));
+    var gl = svg("text", { x: L + 6, y: Y(c.goal) - 6 }); gl.textContent = "目標 " + num(c.goal); s.appendChild(gl);
+    var pd = planPoints().map(function (p, i) { return (i ? "L" : "M") + X(p.date).toFixed(1) + " " + Y(p.count).toFixed(1); }).join(" ");
+    s.appendChild(svg("path", { class: "plan", d: pd }));
+    var act = fsorted();
+    if (!act.length) act = [{ date: c.baseDate, count: c.base }];
+    var ad = act.map(function (p, i) { return (i ? "L" : "M") + X(p.date).toFixed(1) + " " + Y(p.count).toFixed(1); }).join(" ");
+    if (act.length > 1) s.appendChild(svg("path", { class: "act", d: ad }));
+    act.forEach(function (p) { s.appendChild(svg("circle", { class: "dot", cx: X(p.date), cy: Y(p.count), r: 5 })); });
+    host.appendChild(s);
+    host.appendChild(h("div", { class: "legend" },
+      h("span", null, h("i"), "實際粉絲數"), h("span", null, h("i", { class: "p" }), "計畫曲線"), h("span", null, h("i", { class: "g" }), "目標線")));
+  }
+
+  /* ---------- tab: overview ---------- */
+  function mountOverview() {
+    var hero = h("section", { class: "card hero" });
+    var chartHost = h("div");
+    var cards = h("div", { class: "grid" });
+    $main.appendChild(h("div", { class: "stack" }, hero, h("section", { class: "card" }, h("h3", { text: "粉絲數與計畫曲線" }), chartHost), cards));
+    view.update = function () {
+      var c = cfg(), cur = curFollowers(), now = cur.count, td = today();
+      var gained = now - c.base, toGo = Math.max(0, c.goal - now), left = Math.max(0, DD(td, c.goalDate));
+      var need = left > 0 ? toGo / left : null;
+      var elapsed = DD(c.baseDate, cur.date), pace = elapsed >= 3 ? gained / elapsed : null;
+      var pct = Math.max(0, Math.min(100, ((now - c.base) / Math.max(1, c.goal - c.base)) * 100));
+      var planNow = planAt(cur.date), diff = now - planNow;
+      hero.textContent = "";
+      hero.appendChild(h("div", null,
+        h("div", { class: "label", text: "目前粉絲數（" + md(cur.date) + " 記錄）" }),
+        h("div", { class: "big" }, num(now), h("small", { text: "/ " + num(c.goal) })),
+        h("div", { class: "bar", role: "progressbar", "aria-valuenow": Math.round(pct), "aria-valuemin": 0, "aria-valuemax": 100 }, h("i", { style: "width:" + pct + "%" })),
+        h("div", { class: "small muted" }, "從 " + num(c.base) + " 出發，完成 " + pct.toFixed(1) + "%")));
+      hero.appendChild(h("div", { class: "stats" },
+        h("div", { class: "stat" }, h("b", { text: (gained >= 0 ? "+" : "") + num(gained) }), h("span", { text: "已增加" })),
+        h("div", { class: "stat" }, h("b", { text: num(toGo) }), h("span", { text: "還差" })),
+        h("div", { class: "stat" }, h("b", { text: left + " 天" }), h("span", { text: "距離 " + md(c.goalDate) })),
+        h("div", { class: "stat" }, h("b", { text: need == null ? "—" : "+" + need.toFixed(1) }), h("span", { text: "剩下每天要增加" })),
+        h("div", { class: "stat" }, h("b", { text: pace == null ? "—" : (pace >= 0 ? "+" : "") + pace.toFixed(1) }), h("span", { text: "目前實際每天（至少 3 天資料）" })),
+        h("div", { class: "stat" }, h("b", { text: (diff >= 0 ? "+" : "") + num(diff) }), h("span", { text: "對照計畫曲線" }))));
+      drawChart(chartHost);
+
+      cards.textContent = "";
+      var wk = PLAN.filter(function (w) { return td >= w.s && td <= w.e; })[0] || (td < PLAN[0].s ? PLAN[0] : PLAN[PLAN.length - 1]);
+      cards.appendChild(h("section", { class: "card" },
+        h("div", { class: "label", text: td < PLAN[0].s ? "第一週（尚未開始）" : "本週重點（第 " + wk.n + " 週）" }),
+        h("p", { style: "margin:6px 0", text: wk.f }),
+        h("div", { class: "small muted" }, md(wk.s) + " 到 " + md(wk.e) + "，週末目標 " + num(wk.t) + " 位")));
+
+      var upcoming = S.posts.filter(function (p) { return p.date >= td && p.status !== "已發布"; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 4);
+      var lst = h("div", { class: "list" });
+      if (!upcoming.length) lst.appendChild(h("div", { class: "small muted", text: "還沒有排程，到「排程月曆」新增。" }));
+      upcoming.forEach(function (p) {
+        lst.appendChild(h("div", { class: "row" },
+          h("div", null, h("b", { text: md(p.date) + " " + wd(p.date) }), "　", p.title || "（未命名）"),
+          h("span", { class: "pill " + stClass(p.status), text: p.status || "待規劃" })));
+      });
+      cards.appendChild(h("section", { class: "card" }, h("div", { class: "label", text: "接下來要發" }), lst));
+
+      var gifts = S.posts.filter(function (p) { return p.gift && p.giftStatus !== "完成"; });
+      var noReview = S.posts.filter(function (p) { return p.status === "已發布" && !S.reviews.some(function (r) { return r.postId === p.id; }); });
+      var unused = S.ideas.filter(function (i) { return !i.used; });
+      var todo = h("div", { class: "list" });
+      todo.appendChild(h("div", { class: "row" }, h("span", { text: "贈品 PDF 還沒做完" }), h("span", { class: "pill " + (gifts.length ? "warn" : "ok"), text: gifts.length + " 份" })));
+      todo.appendChild(h("div", { class: "row" }, h("span", { text: "已發布但還沒覆盤" }), h("span", { class: "pill " + (noReview.length ? "warn" : "ok"), text: noReview.length + " 則" })));
+      todo.appendChild(h("div", { class: "row" }, h("span", { text: "靈感還沒用到" }), h("span", { class: "pill", text: unused.length + " 則" })));
+      cards.appendChild(h("section", { class: "card" }, h("div", { class: "label", text: "待辦" }), todo));
+
+      var fr = cfg().formResponses;
+      cards.appendChild(h("section", { class: "card" },
+        h("div", { class: "label", text: "理財保單健檢諮詢表" }),
+        h("div", { class: "stats" },
+          h("div", { class: "stat" }, h("b", { text: fr == null ? "—" : String(fr) }), h("span", { text: "已填寫" })),
+          h("div", { class: "stat" }, h("b", { text: cfg().bookings == null ? "—" : String(cfg().bookings) }), h("span", { text: "已預約諮詢" }))),
+        h("a", { href: "#form", class: "small", text: "看轉換細節" })));
+    };
+  }
+  function stClass(s) { return s === "已發布" ? "ok" : s === "已排程" ? "acc" : s === "草稿" ? "warn" : "mute"; }
+
+  /* ---------- tab: plan ---------- */
+  function mountPlan() {
+    var c = cfg();
+    var body = h("div", { class: "stack" });
+    body.appendChild(h("div", null, h("h2", { text: "三個月漲粉計畫" }),
+      h("p", { class: "lead", text: "目標：" + md(c.baseDate) + " 到 " + md(c.goalDate) + "，粉絲從 913 到 5,000。這個帳號是實驗代操，做法跑通之後，要能複製給其他代操帳號。" })));
+    body.appendChild(h("section", { class: "card" },
+      h("h3", { text: "這個目標有多難" }),
+      h("p", { style: "margin:0 0 8px", text: "要多 4,087 位粉絲，平均每天 45 位。我的假設是只靠穩定發文，自然成長大約每天 10 位（這是假設，第一個月實測後要校正），91 天只會到約 1,800。" }),
+      h("div", { class: "note warn", text: "缺口約 3,200 位要靠破圈內容或廣告補。所以計畫的核心是找到「一支會被大量轉傳的 Reels」，再放大。建議把 3,000 當保底線，5,000 當衝刺線。" })));
+    var ph = h("div", { class: "grid" });
+    PHASES.forEach(function (p, i) {
+      ph.appendChild(h("section", { class: "card phase" },
+        h("h3", null, h("span", { class: "pill acc", text: "階段 " + (i + 1) }), p.name),
+        h("div", { class: "small muted", text: p.range + "　粉絲 " + p.goal }),
+        h("ul", null, p.items.map(function (t) { return h("li", { text: t }); }))));
+    });
+    body.appendChild(ph);
+    body.appendChild(h("section", { class: "card" },
+      h("h3", { text: "每週節奏（最低要求）" }),
+      h("div", { class: "grid" },
+        h("div", null, h("b", { text: "輪播圖文 1 到 2 則" }), h("div", { class: "small muted", text: "收藏與轉換，口令導向諮詢表單" })),
+        h("div", null, h("b", { text: "Reels 2 支" }), h("div", { class: "small muted", text: "她的帳號過去幾乎都發 Reels，先維持這個強項" })),
+        h("div", null, h("b", { text: "限動 5 天以上" }), h("div", { class: "small muted", text: "金句限動加日常，維持熟悉感" }))),
+      h("div", { class: "note", style: "margin-top:12px", text: "目前你排的是每週 1 則輪播（11/4、11/10、11/19、11/26、12/1）。這是底線，要到 5,000 還需要補上每週 2 支 Reels。" })));
+    var wkHost = h("section", { class: "card" });
+    body.appendChild(wkHost);
+    body.appendChild(h("section", { class: "card" },
+      h("h3", { text: "檢查點與調整" }),
+      h("div", { class: "list" },
+        h("div", null, h("b", { text: "11/29 要到 1,200　" }), "低於 1,100：先檢查首頁轉換，不是加更多內容，看「觸及到點進首頁到追蹤」哪一步掉得最多。"),
+        h("div", null, h("b", { text: "12/20 要到 2,000　" }), "低於 1,800：還沒出現破圈內容，改試靈感收件匣裡互動最高的題型，並找同溫層帳號聯名。"),
+        h("div", null, h("b", { text: "1/10 要到 3,450　" }), "低於 3,000：5,000 難達成，改以 4,000 收尾，或決定是否投廣告加強最好的一支 Reels。"))));
+    $main.appendChild(body);
+    view.update = function () {
+      wkHost.textContent = "";
+      var td = today(), f = fsorted();
+      var rows = PLAN.map(function (w) {
+        var past = f.filter(function (x) { return x.date <= w.e; });
+        var act = (w.s <= td && past.length) ? past[past.length - 1].count : null;
+        var d = act == null ? null : act - w.t;
+        var cur = td >= w.s && td <= w.e;
+        return h("tr", { class: cur ? "now" : "" },
+          h("td", { text: "第 " + w.n + " 週" }),
+          h("td", { text: md(w.s) + " 到 " + md(w.e) }),
+          h("td", { class: "num", text: num(w.t) }),
+          h("td", { class: "num", text: act == null ? "—" : num(act) }),
+          h("td", { class: "num" }, d == null ? "—" : h("span", { class: "pill " + (d >= 0 ? "ok" : d > -80 ? "warn" : "bad"), text: (d >= 0 ? "+" : "") + num(d) })),
+          h("td", { text: w.f }));
+      });
+      wkHost.appendChild(h("h3", { text: "每週目標與實際" }));
+      wkHost.appendChild(h("div", { class: "tbl" }, h("table", null,
+        h("thead", null, h("tr", null, h("th", { text: "週" }), h("th", { text: "日期" }), h("th", { class: "num", text: "目標" }), h("th", { class: "num", text: "實際" }), h("th", { class: "num", text: "差距" }), h("th", { text: "這週的重點" }))),
+        h("tbody", null, rows))));
+      wkHost.appendChild(h("div", { class: "small muted", style: "margin-top:8px", text: "實際數字來自「IG 覆盤」裡記的粉絲數，每週一記一次。" }));
+    };
+  }
+
+  /* ---------- shared: images, lightbox, tasks ---------- */
+  function bu(id) { if (!id) return ""; return (ASSET_MAP && ASSET_MAP[id]) || ""; }
+  function lightbox(src) {
+    var lb = h("div", { class: "lb", role: "dialog", "aria-label": "放大看圖", onclick: function () { lb.remove(); } }, h("img", { src: src, alt: "" }));
+    document.body.appendChild(lb);
+  }
+  function uploadBlob(blob, type) {
+    if (!S.assets) { toast("這個畫面不能上傳圖片（需要有編輯權限）"); return Promise.reject(new Error("noassets")); }
+    return S.assets.upload(blob, type ? { type: type } : undefined);
+  }
+  function defaultTasks(kind) {
+    if (kind === "限動") return ["確認限動圖（字有沒有被切到）", "到 IG 發限動，右上角帳號要在", "有連結的話加連結貼紙"];
+    if (kind === "Reels") return ["確認影片、字幕與封面", "貼上 IG 內文並發布", "發布後 24 小時內回覆留言", "發布 3 天後到「IG 覆盤」記數據"];
+    return ["逐頁看過圖文（錯字、數字）", "贈品 PDF 做好，私訊自動回覆的連結換成真的", "貼上 IG 內文，設定發布時間", "發布後 24 小時內回覆留言並私訊贈品", "發布 3 天後到「IG 覆盤」記數據"];
+  }
+  function tasksOf(p) {
+    return (p.tasks && p.tasks.length) ? p.tasks : defaultTasks(p.kind).map(function (t) { return { t: t, done: false }; });
+  }
+
+  /* ---------- tab: calendar ---------- */
+  var KINDS = ["輪播", "Reels", "限動", "貼文"];
+  var STATUSES = ["待規劃", "草稿", "已排程", "已發布"];
+  var GIFTST = ["待做", "製作中", "完成"];
+  var STAGES = ["（未選）", "吸引注意", "建立信任", "留言／私訊索取", "說明會／諮詢", "跟進"];
+  function mountCalendar() {
+    var head = h("div", { class: "cal-head" });
+    var grid = h("div", { class: "cal", role: "grid" });
+    var detail = h("section", { class: "card", id: "cal-detail", hidden: true });
+    var formHost = h("section", { class: "card" });
+    var formImgs = [];
+    $main.appendChild(h("div", { class: "stack" },
+      h("div", null, h("h2", { text: "排程月曆" }), h("p", { class: "lead", text: "每一天都附上要貼的東西。點貼文，看圖、文案、回覆內容和當天要做的事。" })),
+      h("section", { class: "card" }, head, grid), detail, formHost));
+
+    function findPost(id) { return S.posts.filter(function (p) { return p.id === id; })[0] || null; }
+    function pick(p) {
+      S.editing = p ? p.id : null; fillForm(p); renderDetail();
+      var t = p ? detail : formHost; t.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    /* ----- detail: what to post that day ----- */
+    function block(title, text) {
+      if (!text) return h("div", { class: "small muted", text: title + "：還沒寫" });
+      return h("div", null, h("div", { class: "row", style: "margin-bottom:6px" }, h("b", { text: title }), h("button", { class: "btn ghost sm", type: "button", text: "複製", onclick: function () { copy(text); } })), h("div", { class: "box", text: text }));
+    }
+    function renderDetail() {
+      var p = findPost(S.editing);
+      detail.textContent = "";
+      if (!p) { detail.hidden = true; return; }
+      detail.hidden = false;
+      var imgs = p.images || [];
+      detail.appendChild(h("div", { class: "row" },
+        h("div", null, h("div", { class: "label", text: md(p.date) + " " + wd(p.date) + "　" + (p.kind || "") }), h("h3", { style: "margin:2px 0 0", text: p.title || "（未命名）" })),
+        h("div", { class: "actions" }, p.stage ? h("span", { class: "pill acc", text: p.stage }) : null, h("span", { class: "pill " + stClass(p.status), text: p.status || "待規劃" }))));
+      var body = h("div", { class: "stack", style: "margin-top:14px" });
+      body.appendChild(imgs.length
+        ? h("div", { class: "strip" }, imgs.map(function (id, i) { return h("img", { src: bu(id), alt: "第 " + (i + 1) + " 張", loading: "lazy", onclick: function () { lightbox(bu(id)); } }); }))
+        : h("div", { class: "empty", text: "這一天還沒有貼文圖片。到下方「修改」上傳。" }));
+      if (p.keyword || p.gift) {
+        body.appendChild(h("dl", { class: "kv" },
+          h("dt", { text: "留言口令" }), h("dd", { text: p.keyword || "（還沒定）" }),
+          h("dt", { text: "贈品" }), h("dd", null, p.gift || "（沒有）", p.gift ? h("span", { class: "pill " + (p.giftStatus === "完成" ? "ok" : "warn"), style: "margin-left:8px", text: p.giftStatus || "待做" }) : null)));
+      }
+      body.appendChild(block("IG 內文（直接複製貼上）", p.caption));
+      body.appendChild(block("留言回覆（三則輪流用）", p.reply));
+      body.appendChild(block("私訊自動回覆", p.dm));
+      var tasks = tasksOf(p);
+      body.appendChild(h("div", null, h("b", { text: "這天要做的事" }),
+        h("div", { class: "tasks" }, tasks.map(function (t, i) {
+          return h("label", { class: t.done ? "done" : "" },
+            h("input", { type: "checkbox", checked: t.done, onchange: function () {
+              if (!guard()) { this.checked = t.done; return; }
+              var next = tasks.map(function (x, j) { return j === i ? { t: x.t, done: !x.done } : x; });
+              S.db.doc("posts/" + p.id).update({ tasks: next }).then(null, fail);
+            } }), h("span", { text: t.t }));
+        }))));
+      if (p.note) body.appendChild(h("div", { class: "note warn small", text: "備註：" + p.note }));
+      detail.appendChild(body);
+    }
+
+    /* ----- form ----- */
+    function renderFormImgs() {
+      var host = document.getElementById("pf-imgs"); if (!host) return;
+      host.textContent = "";
+      if (!formImgs.length) host.appendChild(h("span", { class: "small muted", text: "還沒有圖片" }));
+      formImgs.forEach(function (id, i) {
+        host.appendChild(h("div", { class: "pimg" }, h("img", { src: bu(id), alt: "" }),
+          h("button", { type: "button", class: "x", "aria-label": "移除這張", text: "×", onclick: function () { formImgs.splice(i, 1); renderFormImgs(); } }),
+          i > 0 ? h("button", { type: "button", class: "l", "aria-label": "往前移", text: "‹", onclick: function () { var t = formImgs[i - 1]; formImgs[i - 1] = formImgs[i]; formImgs[i] = t; renderFormImgs(); } }) : null));
+      });
+    }
+    function buildForm() {
+      formHost.textContent = "";
+      formHost.appendChild(h("h3", { id: "pf-title", text: "新增貼文" }));
+      formHost.appendChild(h("div", { class: "form" },
+        field("pf-date", "日期", input("pf-date", "date")),
+        field("pf-kind", "形式", select("pf-kind", KINDS)),
+        field("pf-status", "狀態", select("pf-status", STATUSES)),
+        field("pf-stage", "行銷階段", select("pf-stage", STAGES)),
+        field("pf-title-in", "主題", input("pf-title-in", "text", "例如：631 薪水先切三份"), "wide"),
+        field("pf-kw", "留言口令", input("pf-kw", "text", "兩個字的日常詞")),
+        field("pf-gift", "贈品名稱", input("pf-gift", "text", "例如：631 月薪分配表")),
+        field("pf-giftst", "贈品進度", select("pf-giftst", GIFTST)),
+        field("pf-path", "成品位置", input("pf-path", "text", "資料夾或檔名")),
+        h("div", { class: "field wide" }, h("label", { text: "貼文圖片（依序，左邊是第一張）" }),
+          h("div", { id: "pf-imgs", class: "pimgs" }),
+          h("div", { class: "actions" }, h("input", { id: "pf-file", type: "file", accept: "image/*", multiple: true, style: "display:none", onchange: function () {
+            var files = Array.prototype.slice.call(this.files || []); this.value = "";
+            files.reduce(function (pr, f) { return pr.then(function () { return uploadBlob(f).then(function (r) { formImgs.push(r.id); renderFormImgs(); }); }); }, Promise.resolve()).then(function () { if (files.length) toast("已上傳，記得按儲存"); }, function () {});
+          } }), h("button", { class: "btn ghost sm", type: "button", text: "上傳圖片", onclick: function () { document.getElementById("pf-file").click(); } }))),
+        field("pf-caption", "IG 內文（Threads 同一篇）", h("textarea", { id: "pf-caption", style: "min-height:170px" }), "wide"),
+        field("pf-reply", "留言回覆（三則，一行一則）", h("textarea", { id: "pf-reply" }), "wide"),
+        field("pf-dm", "私訊自動回覆", h("textarea", { id: "pf-dm" }), "wide"),
+        field("pf-tasks", "這天要做的事（一行一件，留空用預設）", h("textarea", { id: "pf-tasks" }), "wide"),
+        field("pf-note", "備註", h("textarea", { id: "pf-note", placeholder: "要確認的事、候選題目、靈感來源" }), "wide")));
+      var del = h("button", { class: "btn ghost danger sm", type: "button", text: "刪除這則", hidden: true, id: "pf-del" });
+      armDelete(del, function () {
+        if (!guard() || !S.editing) return;
+        S.db.doc("posts/" + S.editing).delete().then(function () { S.editing = null; toast("已刪除"); fillForm(null); renderDetail(); }, fail);
+      });
+      formHost.appendChild(h("div", { class: "actions", style: "margin-top:12px" },
+        h("button", { class: "btn", type: "button", text: "儲存", onclick: save }),
+        h("button", { class: "btn ghost", type: "button", text: "清空，新增另一則", onclick: function () { pick(null); } }),
+        del));
+      fillForm(findPost(S.editing));
+    }
+    function fillForm(p) {
+      document.getElementById("pf-title").textContent = p ? "修改：" + (p.title || "") : "新增貼文";
+      setVal("pf-date", p ? p.date : ""); setVal("pf-kind", p ? p.kind : "輪播"); setVal("pf-status", p ? p.status : "待規劃");
+      setVal("pf-stage", p && p.stage ? p.stage : "（未選）");
+      setVal("pf-title-in", p ? p.title : ""); setVal("pf-kw", p ? p.keyword : ""); setVal("pf-gift", p ? p.gift : "");
+      setVal("pf-giftst", p ? p.giftStatus : "待做"); setVal("pf-path", p ? p.path : "");
+      setVal("pf-caption", p ? p.caption : ""); setVal("pf-reply", p ? p.reply : ""); setVal("pf-dm", p ? p.dm : "");
+      setVal("pf-tasks", p && p.tasks ? p.tasks.map(function (t) { return t.t; }).join("\n") : "");
+      setVal("pf-note", p ? p.note : "");
+      formImgs = p && p.images ? p.images.slice() : []; renderFormImgs();
+      document.getElementById("pf-del").hidden = !p;
+    }
+    function save() {
+      if (!guard()) return;
+      var d = val("pf-date");
+      if (!d) { toast("請先選日期"); return; }
+      var cur = S.editing ? findPost(S.editing) : null;
+      var old = {}; ((cur && cur.tasks) || []).forEach(function (t) { old[t.t] = t.done; });
+      var lines = val("pf-tasks").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+      var o = { date: d, kind: val("pf-kind"), status: val("pf-status"), stage: val("pf-stage") === "（未選）" ? "" : val("pf-stage"),
+        title: val("pf-title-in"), keyword: val("pf-kw"), gift: val("pf-gift"), giftStatus: val("pf-giftst"), path: val("pf-path"),
+        images: formImgs.slice(), caption: document.getElementById("pf-caption").value, reply: document.getElementById("pf-reply").value, dm: document.getElementById("pf-dm").value,
+        tasks: lines.map(function (t) { return { t: t, done: !!old[t] }; }), note: val("pf-note") };
+      var p = cur ? S.db.doc("posts/" + cur.id).set(o) : S.db.collection("posts").add(o);
+      p.then(function () { toast("已儲存"); if (!cur) pick(null); }, fail);
+    }
+
+    /* ----- month grid ----- */
+    head.appendChild(h("button", { class: "btn ghost sm", type: "button", text: "上個月", onclick: function () { shift(-1); } }));
+    var ttl = h("h3", { id: "cal-title" });
+    head.appendChild(ttl);
+    head.appendChild(h("button", { class: "btn ghost sm", type: "button", text: "下個月", onclick: function () { shift(1); } }));
+    function shift(n) { var d = new Date(S.cal.y, S.cal.m + n, 1); S.cal = { y: d.getFullYear(), m: d.getMonth() }; draw(); }
+    function draw() {
+      ttl.textContent = S.cal.y + " 年 " + (S.cal.m + 1) + " 月";
+      grid.textContent = "";
+      ["一", "二", "三", "四", "五", "六", "日"].forEach(function (x) { grid.appendChild(h("div", { class: "dow", text: x })); });
+      var first = new Date(S.cal.y, S.cal.m, 1), off = (first.getDay() + 6) % 7, days = new Date(S.cal.y, S.cal.m + 1, 0).getDate(), td = today();
+      var total = Math.ceil((off + days) / 7) * 7;
+      var _loop = function (k) {
+        var dt = new Date(S.cal.y, S.cal.m, 1 - off + k), ds = I(dt), inMonth = dt.getMonth() === S.cal.m;
+        var cell = h("div", { class: "day" + (inMonth ? "" : " off") + (ds === td ? " today" : ""), role: "gridcell" }, h("b", { text: String(dt.getDate()) }));
+        S.posts.filter(function (p) { return p.date === ds; }).forEach(function (p) {
+          var st = p.status || "待規劃", sel = S.editing === p.id;
+          cell.appendChild(h("button", { type: "button", class: "chip s-" + st + (sel ? " sel" : ""), title: (p.kind || "") + "｜" + (p.title || ""),
+            onclick: function (e) { e.stopPropagation(); pick(p); } },
+            p.images && p.images[0] ? h("img", { class: "thumb", src: bu(p.images[0]), alt: "", loading: "lazy" }) : null,
+            h("span", { class: "cs", text: (p.stage ? p.stage + " · " : "") + st }), p.title || "（未命名）"));
+        });
+        cell.addEventListener("click", function () { pick(null); setVal("pf-date", ds); formHost.scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+        grid.appendChild(cell);
+      };
+      for (var k = 0; k < total; k++) _loop(k);
+    }
+    buildForm();
+    view.update = function () {
+      draw();
+      if (S.editing && !findPost(S.editing)) { S.editing = null; fillForm(null); }
+      renderDetail();
+    };
+  }
+
+  /* ---------- tab: review ---------- */
+  function mountReview() {
+    var flForm = h("section", { class: "card" });
+    var rvForm = h("section", { class: "card" });
+    var sum = h("div", { class: "grid" });
+    var list = h("section", { class: "card" });
+    $main.appendChild(h("div", { class: "stack" },
+      h("div", null, h("h2", { text: "IG 覆盤" }), h("p", { class: "lead", text: "每週一記粉絲數，每則貼文發完 3 天後記一次數據。這裡的數字是計畫曲線和每週目標的實際來源。" })),
+      flForm, sum, rvForm, list));
+
+    flForm.appendChild(h("h3", { text: "記粉絲數" }));
+    flForm.appendChild(h("div", { class: "form" },
+      field("fl-date", "日期", input("fl-date", "date")),
+      field("fl-count", "粉絲數", input("fl-count", "number", "例如 930")),
+      field("fl-note", "備註", input("fl-note", "text", "選填")),
+      h("button", { class: "btn", type: "button", text: "記下來", onclick: function () {
+        if (!guard()) return;
+        var d = val("fl-date"), n = numOrNull("fl-count");
+        if (!d || n == null) { toast("日期和粉絲數都要填"); return; }
+        S.db.doc("followers/" + d).set({ date: d, count: n, note: val("fl-note") }).then(function () { toast("已記錄"); setVal("fl-count", ""); setVal("fl-note", ""); }, fail);
+      } })));
+    var flList = h("div", { class: "small muted", style: "margin-top:10px" });
+    flForm.appendChild(flList);
+    setTimeout(function () { setVal("fl-date", today()); }, 0);
+
+    rvForm.appendChild(h("h3", { text: "記一則貼文的數據" }));
+    rvForm.appendChild(h("div", { class: "form" },
+      field("rv-post", "對應貼文", h("select", { id: "rv-post" })),
+      field("rv-date", "發布日", input("rv-date", "date")),
+      field("rv-title", "主題", input("rv-title", "text")),
+      field("rv-kind", "形式", select("rv-kind", KINDS)),
+      field("rv-reach", "觸及", input("rv-reach", "number")),
+      field("rv-likes", "讚", input("rv-likes", "number")),
+      field("rv-comments", "留言", input("rv-comments", "number")),
+      field("rv-saves", "收藏", input("rv-saves", "number")),
+      field("rv-shares", "分享", input("rv-shares", "number")),
+      field("rv-kw", "口令留言數", input("rv-kw", "number")),
+      field("rv-fans", "新增粉絲", input("rv-fans", "number")),
+      field("rv-note", "心得：哪裡好、哪裡可以改", h("textarea", { id: "rv-note" }), "wide")));
+    rvForm.appendChild(h("div", { class: "actions", style: "margin-top:12px" },
+      h("button", { class: "btn", type: "button", text: "儲存覆盤", onclick: function () {
+        if (!guard()) return;
+        var d = val("rv-date"), t = val("rv-title");
+        if (!d || !t) { toast("發布日和主題要填"); return; }
+        var o = { postId: val("rv-post") || null, date: d, title: t, kind: val("rv-kind"), reach: numOrNull("rv-reach"), likes: numOrNull("rv-likes"), comments: numOrNull("rv-comments"), saves: numOrNull("rv-saves"), shares: numOrNull("rv-shares"), keywords: numOrNull("rv-kw"), newFans: numOrNull("rv-fans"), note: val("rv-note") };
+        S.db.collection("reviews").add(o).then(function () { toast("已儲存"); ["rv-title", "rv-reach", "rv-likes", "rv-comments", "rv-saves", "rv-shares", "rv-kw", "rv-fans", "rv-note"].forEach(function (i) { setVal(i, ""); }); }, fail);
+      } })));
+    document.getElementById("rv-post").addEventListener("change", function () {
+      var p = S.posts.filter(function (x) { return x.id === this.value; }, this)[0];
+      if (p) { setVal("rv-date", p.date); setVal("rv-title", p.title); setVal("rv-kind", p.kind); }
+    });
+
+    function sumv(k) { return S.reviews.reduce(function (a, r) { return a + (Number(r[k]) || 0); }, 0); }
+    view.update = function () {
+      var sel = document.getElementById("rv-post"), keep = sel.value;
+      sel.textContent = ""; sel.appendChild(h("option", { value: "", text: "（不對應，自己填）" }));
+      S.posts.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).forEach(function (p) { sel.appendChild(h("option", { value: p.id, text: md(p.date) + " " + (p.title || "") })); });
+      sel.value = keep;
+      var f = fsorted().slice(-6).reverse();
+      flList.textContent = f.length ? "最近記錄：" + f.map(function (x) { return md(x.date) + "　" + num(x.count); }).join("　｜　") : "還沒有記錄。";
+      sum.textContent = "";
+      var best = S.reviews.slice().sort(function (a, b) { return (b.newFans || 0) - (a.newFans || 0); })[0];
+      [["已覆盤貼文", String(S.reviews.length)], ["合計新增粉絲", num(sumv("newFans"))], ["合計口令留言", num(sumv("keywords"))], ["合計收藏", num(sumv("saves"))]].forEach(function (x) {
+        sum.appendChild(h("div", { class: "card" }, h("div", { class: "stat" }, h("b", { text: x[1] }), h("span", { text: x[0] }))));
+      });
+      if (best && (best.newFans || 0) > 0) sum.appendChild(h("div", { class: "card" }, h("div", { class: "label", text: "新增粉絲最多" }), h("div", { text: best.title }), h("div", { class: "small muted", text: "+" + num(best.newFans) + " 位" })));
+      list.textContent = "";
+      list.appendChild(h("h3", { text: "貼文數據" }));
+      if (!S.reviews.length) { list.appendChild(h("div", { class: "empty", text: "還沒有覆盤。貼文發出 3 天後，到上面記一筆。" })); return; }
+      var rows = S.reviews.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; }).map(function (r) {
+        var inter = (r.reach > 0) ? (((r.likes || 0) + (r.comments || 0) + (r.saves || 0) + (r.shares || 0)) / r.reach * 100).toFixed(1) + "%" : "—";
+        var del = h("button", { class: "btn ghost danger sm", type: "button", text: "刪除" });
+        armDelete(del, function () { if (guard()) S.db.doc("reviews/" + r.id).delete().then(function () { toast("已刪除"); }, fail); });
+        return h("tr", null, h("td", { text: md(r.date) }), h("td", null, r.title, h("div", { class: "small muted", text: r.note || "" })), h("td", { text: r.kind || "" }),
+          h("td", { class: "num", text: num(r.reach) }), h("td", { class: "num", text: num(r.likes) }), h("td", { class: "num", text: num(r.comments) }), h("td", { class: "num", text: num(r.saves) }), h("td", { class: "num", text: num(r.shares) }),
+          h("td", { class: "num", text: inter }), h("td", { class: "num", text: num(r.keywords) }), h("td", { class: "num", text: r.newFans == null ? "—" : "+" + num(r.newFans) }), h("td", null, del));
+      });
+      list.appendChild(h("div", { class: "tbl" }, h("table", null,
+        h("thead", null, h("tr", null, ["日期", "主題", "形式"].map(function (x) { return h("th", { text: x }); }), ["觸及", "讚", "留言", "收藏", "分享", "互動率", "口令", "新粉"].map(function (x) { return h("th", { class: "num", text: x }); }), h("th"))),
+        h("tbody", null, rows))));
+    };
+  }
+
+  /* ---------- tab: ideas ---------- */
+  var ITYPES = ["圖文靈感", "Reels 靈感", "限動排版", "金句", "其他"];
+  function mountIdeas() {
+    var form = h("section", { class: "card" });
+    var list = h("div", { class: "grid" });
+    var filt = select("id-filter", ["全部", "還沒用", "已使用"].concat(ITYPES));
+    $main.appendChild(h("div", { class: "stack" },
+      h("div", null, h("h2", { text: "靈感收件匣" }), h("p", { class: "lead", text: "巧巧給你的靈感先貼在這裡，做圖文時直接來這裡挑。引用別人的內容，成品要標明來源帳號。" })),
+      form,
+      h("div", { class: "row" }, h("h3", { style: "margin:0", text: "已收集" }), h("div", { style: "min-width:160px" }, filt)),
+      list));
+    form.appendChild(h("h3", { text: "貼一則靈感" }));
+    form.appendChild(h("div", { class: "form" },
+      field("id-url", "連結", input("id-url", "url", "貼上 IG 連結"), "wide"),
+      field("id-type", "類型", select("id-type", ITYPES)),
+      field("id-from", "來源帳號", input("id-from", "text", "例如 @某某")),
+      field("id-text", "內容或重點", h("textarea", { id: "id-text", placeholder: "貼上貼文文字，或寫下為什麼喜歡" }), "wide"),
+      field("id-use", "想怎麼用在巧巧身上", input("id-use", "text", "選填"), "wide")));
+    form.appendChild(h("div", { class: "actions", style: "margin-top:12px" }, h("button", { class: "btn", type: "button", text: "收進來", onclick: function () {
+      if (!guard()) return;
+      var u = val("id-url"), t = val("id-text");
+      if (!u && !t) { toast("連結或內容至少填一個"); return; }
+      S.db.collection("ideas").add({ url: u, type: val("id-type"), from: val("id-from"), text: t, use: val("id-use"), used: false, createdAt: new Date().toISOString(), by: S.uid || null }).then(function () {
+        toast("已收進來"); ["id-url", "id-from", "id-text", "id-use"].forEach(function (i) { setVal(i, ""); });
+      }, fail);
+    } })));
+    function draw() {
+      list.textContent = "";
+      var f = filt.value;
+      var items = S.ideas.slice().sort(function (a, b) { return (a.createdAt || "") < (b.createdAt || "") ? 1 : -1; }).filter(function (i) {
+        return f === "全部" || (f === "還沒用" && !i.used) || (f === "已使用" && i.used) || i.type === f;
+      });
+      if (!items.length) { list.appendChild(h("div", { class: "empty", style: "grid-column:1/-1", text: S.ideas.length ? "這個分類裡還沒有靈感" : "還沒有靈感。把巧巧給你的連結貼在上面。" })); return; }
+      items.forEach(function (i) {
+        var del = h("button", { class: "btn ghost danger sm", type: "button", text: "刪除" });
+        armDelete(del, function () { if (guard()) S.db.doc("ideas/" + i.id).delete().then(function () { toast("已刪除"); }, fail); });
+        list.appendChild(h("article", { class: "card idea" + (i.used ? " used" : "") },
+          h("div", { class: "row" }, h("span", { class: "pill acc", text: i.type || "其他" }), i.from ? h("span", { class: "small muted", text: i.from }) : null),
+          i.url ? h("a", { href: i.url, target: "_blank", rel: "noopener", text: srcLabel(i.url) }) : null,
+          i.text ? h("div", { class: "txt", text: i.text }) : null,
+          i.use ? h("div", { class: "note small", text: "用在巧巧：" + i.use }) : null,
+          h("div", { class: "actions" },
+            h("button", { class: "btn ghost sm", type: "button", text: i.used ? "改回還沒用" : "標為已使用", onclick: function () { if (guard()) S.db.doc("ideas/" + i.id).update({ used: !i.used }).then(null, fail); } }), del)));
+      });
+    }
+    filt.addEventListener("change", draw);
+    view.update = draw;
+  }
+
+  /* ---------- tab: form ---------- */
+  function mountForm() {
+    var body = h("div", { class: "stack" });
+    var stats = h("section", { class: "card" });
+    $main.appendChild(body);
+    body.appendChild(h("div", null, h("h2", { text: "理財保單健檢諮詢表" }), h("p", { class: "lead", text: "每則輪播的口令都導向這份表單。這裡看漏斗：多少人留言口令，多少人真的填了，多少人預約。" })));
+    body.appendChild(h("section", { class: "card" },
+      h("h3", { text: "表單連結" }),
+      h("div", { class: "url", text: FORM_URL }),
+      h("div", { class: "actions", style: "margin-top:10px" },
+        h("button", { class: "btn sm", type: "button", text: "複製填寫連結", onclick: function () { copy(FORM_URL); } }),
+        h("a", { class: "btn ghost sm", href: FORM_URL, target: "_blank", rel: "noopener", style: "text-decoration:none", text: "開啟表單" }),
+        h("a", { class: "btn ghost sm", href: FORM_EDIT, target: "_blank", rel: "noopener", style: "text-decoration:none", text: "查看回覆" })),
+      h("div", { class: "small muted", style: "margin-top:10px", text: "有人填寫時，Google 會寄信到 e2516joy@gmail.com 通知。" })));
+    body.appendChild(stats);
+    body.appendChild(h("section", { class: "card" },
+      h("h3", { text: "更新數字" }),
+      h("p", { class: "small muted", style: "margin:0 0 10px", text: "表單的回覆數在 Google 那邊，儀表板暫時不能自動讀，所以這兩個數字要手動更新（也可以請我更新）。填寫連結被點了幾次，Google 表單看不到，需要之後改用有點擊統計的短網址。" }),
+      h("div", { class: "form" },
+        field("fm-resp", "已填寫份數", input("fm-resp", "number")),
+        field("fm-book", "已預約諮詢", input("fm-book", "number")),
+        h("button", { class: "btn", type: "button", text: "更新", onclick: function () {
+          if (!guard()) return;
+          var o = { formResponses: numOrNull("fm-resp"), bookings: numOrNull("fm-book"), formResponsesAt: today() };
+          var ref = S.db.doc("settings/main");
+          (S.cfgDoc ? ref.update(o) : ref.set(Object.assign({ baseFollowers: DEF.base, baseDate: DEF.baseDate, goal: DEF.goal, goalDate: DEF.goalDate }, o))).then(function () { toast("已更新"); }, fail);
+        } }))));
+    var once = false;
+    view.update = function () {
+      var c = cfg(), kw = S.reviews.reduce(function (a, r) { return a + (Number(r.keywords) || 0); }, 0);
+      if (!once && S.loaded.settings) { setVal("fm-resp", c.formResponses); setVal("fm-book", c.bookings); once = true; }
+      stats.textContent = "";
+      var fr = c.formResponses, bk = c.bookings;
+      function rate(a, b) { return (a == null || !b) ? "—" : (a / b * 100).toFixed(0) + "%"; }
+      stats.appendChild(h("h3", { text: "漏斗" }));
+      stats.appendChild(h("div", { class: "grid" },
+        h("div", { class: "stat" }, h("b", { text: num(kw) }), h("span", { text: "口令留言（來自覆盤）" })),
+        h("div", { class: "stat" }, h("b", { text: fr == null ? "—" : String(fr) }), h("span", { text: "已填寫　" + (c.formResponsesAt ? "更新於 " + md(c.formResponsesAt) : "") })),
+        h("div", { class: "stat" }, h("b", { text: rate(fr, kw) }), h("span", { text: "口令到填寫" })),
+        h("div", { class: "stat" }, h("b", { text: bk == null ? "—" : String(bk) }), h("span", { text: "已預約" })),
+        h("div", { class: "stat" }, h("b", { text: rate(bk, fr) }), h("span", { text: "填寫到預約" }))));
+    };
+  }
+
+  /* ---------- tab: story ---------- */
+  var FB = '"Noto Serif TC","Songti TC","PingFang TC",serif';
+  function mountStory() {
+    var cur = { img: null, photoId: null, photoName: "", loadedId: null };
+    var cvs = h("canvas", { width: 1080, height: 1920, class: "scv", "aria-label": "限動預覽" });
+    var ctx = cvs.getContext("2d");
+    var imgCache = {};
+    var photoKind = "全部";
+    var photoGrid = h("div", { class: "pgrid" });
+    var kindBar = h("div", { class: "actions" });
+    var works = h("div", { class: "stack" });
+    var reqBtn = h("button", { class: "btn", type: "button", text: "請 Nora 出新的一批", onclick: function () {
+      if (!guard()) return;
+      S.db.collection("requests").add({ at: new Date().toISOString(), by: S.uid || null, status: "待做" }).then(function () { toast("已送出，下次請 Claude 看「新的一批」的請求就會出圖"); }, fail);
+    } });
+    var reqNote = h("span", { class: "small muted" });
+    var qlist = h("div", { class: "grid" });
+    var refs = h("div", { class: "grid" });
+    var timer = null;
+
+    function loadImg(src) {
+      return new Promise(function (res, rej) {
+        if (imgCache[src]) return res(imgCache[src]);
+        var im = new Image();
+        im.onload = function () { imgCache[src] = im; res(im); };
+        im.onerror = rej; im.src = src;
+      });
+    }
+    function lines(id, max) { return document.getElementById(id).value.split("\n").map(function (x) { return x.trim(); }).filter(Boolean).slice(0, max); }
+    function spaced(t, x, y, sp, align) {
+      var cs = Array.from(t), ws = cs.map(function (c) { return ctx.measureText(c).width; }), w = ws.reduce(function (a, b) { return a + b; }, 0) + sp * Math.max(0, cs.length - 1);
+      var sx = align === "center" ? x - w / 2 : align === "right" ? x - w : x;
+      cs.forEach(function (c, i) { ctx.fillText(c, sx, y); sx += ws[i] + sp; });
+    }
+    function widthOf(t, sp) { var cs = Array.from(t); return cs.reduce(function (a, c) { return a + ctx.measureText(c).width; }, 0) + sp * Math.max(0, cs.length - 1); }
+    function curLayout() { return val("st-layout") || "照片金句"; }
+    function isCmp() { return curLayout() !== "照片金句"; }
+    function draw() {
+      if (isCmp()) return drawText();
+      var W = 1080, H = 1920;
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.shadowColor = "transparent"; ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#1a1416"; ctx.fillRect(0, 0, W, H);
+      if (cur.img) { var s = Math.max(W / cur.img.width, H / cur.img.height), dw = cur.img.width * s, dh = cur.img.height * s; ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high"; ctx.drawImage(cur.img, (W - dw) / 2, (H - dh) / 2, dw, dh); }
+      var g = ctx.createRadialGradient(W / 2, H * 0.42, 0, W / 2, H * 0.42, H * 0.62);
+      g.addColorStop(0, "rgba(0,0,0,.06)"); g.addColorStop(0.6, "rgba(0,0,0,.16)"); g.addColorStop(1, "rgba(0,0,0,.30)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      var big = lines("st-big", 3), small = lines("st-small", 3), src = val("st-src"), handle = val("st-handle"), align = val("st-align") === "置中" ? "center" : "left";
+      var top = H * (Number(val("st-top")) || 0) / 100, srcT = src ? "—— " + src : "";
+      ctx.textBaseline = "alphabetic";
+      var spB = 52 * 0.14, spS = 32 * 0.16;
+      ctx.font = "500 52px " + FB; var bw = Math.max.apply(null, big.map(function (t) { return widthOf(t, spB); }).concat([0]));
+      ctx.font = "400 32px " + FB;
+      var sw = Math.max.apply(null, small.map(function (t) { return widthOf(t, spS); }).concat([0])), rw = srcT ? widthOf(srcT, spS) : 0;
+      var bwAll = Math.max(bw, sw, rw, 1), cx = W / 2, left = cx - bwAll / 2, right = cx + bwAll / 2;
+      var totalH = big.length * 88 + 4 + small.length * 64 + (srcT ? 64 : 0), cy = top + totalH / 2;
+      if (big.length || small.length) {
+        ctx.save(); ctx.translate(cx, cy); ctx.scale(W * 0.62, (totalH + 260) * 0.5);
+        var rg = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        rg.addColorStop(0, "rgba(30,18,12,.5)"); rg.addColorStop(0.45, "rgba(30,18,12,.3)"); rg.addColorStop(1, "rgba(30,18,12,0)");
+        ctx.fillStyle = rg; ctx.fillRect(-1, -1, 2, 2); ctx.restore();
+      }
+      ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = 16; ctx.shadowOffsetY = 2; ctx.fillStyle = "#fbf6ee";
+      ctx.font = "500 52px " + FB;
+      big.forEach(function (t, i) { spaced(t, cx, top + i * 88 + 44 + 18, spB, "center"); });
+      ctx.font = "400 32px " + FB;
+      var y0 = top + big.length * 88 + 4;
+      small.forEach(function (t, i) { var by = y0 + i * 64 + 32 + 11; align === "center" ? spaced(t, cx, by, spS, "center") : spaced(t, left, by, spS, "left"); });
+      if (srcT) spaced(srcT, right, y0 + small.length * 64 + 32 + 11, spS, "right");
+      if (handle) { ctx.font = "italic 300 26px " + FB; ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.shadowBlur = 10; ctx.textAlign = "right"; ctx.fillText(handle, W - 64, 84); ctx.textAlign = "left"; }
+      ctx.restore();
+    }
+    var PAL = { INK: "#26211f", MUTE: "#8c817a", SOFT: "#5b514c", ACC: "#b0486a", LINE: "#e4d6cc", BG: "#fbf8f4", CARD: "#fffefb", CARDLINE: "#e3cfc0" };
+    function drawBg() {
+      var W = 1080, H = 1920, g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#f8f2ec"); g.addColorStop(0.3, PAL.BG); g.addColorStop(1, "#fcfaf6");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+    function rr(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+    var CB_IDS = ["cb-label", "cb-title", "cb-sub", "cb-l1", "cb-l2", "cb-r1", "cb-r2", "cb-note", "cb-h", "cb-1a", "cb-1b", "cb-2a", "cb-2b", "cb-3a", "cb-3b", "cb-cta", "cb-foot"];
+    var CP_IDS = ["cp-label", "cp-lt", "cp-ls", "cp-rt", "cp-rs", "cp-r1a", "cp-r1b", "cp-r1c", "cp-r1d", "cp-r2a", "cp-r2b", "cp-r2c", "cp-r2d", "cp-r3a", "cp-r3b", "cp-r3c", "cp-r3d", "cp-end"];
+    function parts(t) { return String(t || "").split(/[／\n]/).map(function (x) { return x.trim(); }).filter(Boolean); }
+    function fitSize(arr, weight, size, min, maxW, sp) {
+      var sz = size;
+      while (sz > min) {
+        ctx.font = weight + " " + sz + "px " + FB;
+        var w = Math.max.apply(null, arr.map(function (t) { return widthOf(t, sp); }).concat([0]));
+        if (w <= maxW) break; sz -= 2;
+      }
+      return sz;
+    }
+    function drawCompare() {
+      var W = 1080, H = 1920, L = 66, Rx = 606, mid = 540;
+      var INK = PAL.INK, MUTE = PAL.MUTE, SOFT = PAL.SOFT, ACC = PAL.ACC, LINE = PAL.LINE;
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      drawBg();
+      var label = val("cp-label");
+      if (label) { ctx.font = "400 24px " + FB; ctx.fillStyle = MUTE; spaced(label, L, 262, 6, "left"); }
+      var lt = parts(val("cp-lt"))[0] || "", rt = parts(val("cp-rt"))[0] || "";
+      var ts = Math.min(fitSize([lt], 600, 76, 40, 440, 2), fitSize([rt], 600, 76, 40, 440, 2));
+      ctx.font = "600 " + ts + "px " + FB; ctx.fillStyle = MUTE; spaced(lt, L, 372, 2, "left"); ctx.fillStyle = INK; spaced(rt, Rx, 372, 2, "left");
+      ctx.font = "400 28px " + FB; ctx.fillStyle = MUTE; spaced(parts(val("cp-ls"))[0] || "", L, 440, 3, "left"); ctx.fillStyle = ACC; spaced(parts(val("cp-rs"))[0] || "", Rx, 440, 3, "left");
+      ctx.font = "italic 400 30px " + FB; ctx.fillStyle = MUTE; ctx.textAlign = "center"; ctx.fillText("vs", mid, 440); ctx.textAlign = "left";
+      ctx.strokeStyle = LINE; ctx.lineWidth = 2;
+      var top0 = 480, RH = 340;
+      for (var i = 0; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(L, top0 + i * RH); ctx.lineTo(W - L, top0 + i * RH); ctx.stroke(); }
+      ctx.beginPath(); ctx.moveTo(mid, top0); ctx.lineTo(mid, top0 + 3 * RH); ctx.stroke();
+      for (var r = 1; r <= 3; r++) {
+        var rt0 = top0 + (r - 1) * RH, a = parts(val("cp-r" + r + "a")).slice(0, 2), b = parts(val("cp-r" + r + "b")).slice(0, 2), c = parts(val("cp-r" + r + "c")).slice(0, 2), d = parts(val("cp-r" + r + "d")).slice(0, 2);
+        ctx.fillStyle = PAL.BG; ctx.fillRect(mid - 34, rt0 + RH / 2 - 22, 68, 44);
+        ctx.font = "italic 400 26px " + FB; ctx.fillStyle = ACC; ctx.textAlign = "center"; ctx.fillText("0" + r, mid, rt0 + RH / 2 + 9); ctx.textAlign = "left";
+        var bs = Math.min(fitSize(a, 600, 52, 34, 420, 1), fitSize(c, 600, 52, 34, 420, 1));
+        ctx.font = "600 " + bs + "px " + FB; ctx.fillStyle = MUTE; a.forEach(function (t, k) { spaced(t, L, rt0 + 100 + k * 68, 1, "left"); });
+        ctx.fillStyle = INK; c.forEach(function (t, k) { spaced(t, Rx, rt0 + 100 + k * 68, 1, "left"); });
+        var ss = Math.min(fitSize(b, 400, 30, 20, 420, 1.5), fitSize(d, 400, 30, 20, 420, 1.5));
+        var sy = rt0 + 100 + (Math.max(a.length, c.length) - 1) * 68 + 60;
+        ctx.font = "400 " + ss + "px " + FB; ctx.fillStyle = MUTE; b.forEach(function (t, k) { spaced(t, L, sy + k * 46, 1.5, "left"); });
+        ctx.fillStyle = SOFT; d.forEach(function (t, k) { spaced(t, Rx, sy + k * 46, 1.5, "left"); });
+      }
+      var end = parts(val("cp-end")).slice(0, 3);
+      if (end.length) {
+        ctx.fillStyle = ACC; ctx.fillRect(L, 1570, W - L * 2, 3);
+        var es = fitSize(end, 600, 56, 32, W - L * 2, 2); ctx.font = "600 " + es + "px " + FB;
+        end.forEach(function (t, k) { ctx.fillStyle = k === end.length - 1 ? ACC : INK; spaced(t, L, 1660 + k * 76, 2, "left"); });
+      }
+      var hd = val("st-handle"); if (hd) { ctx.font = "italic 300 24px " + FB; ctx.fillStyle = MUTE; ctx.textAlign = "right"; ctx.fillText(hd, W - L, 1870); ctx.textAlign = "left"; }
+      ctx.restore();
+    }
+    var CQ_IDS = ["cq-label", "cq-quote", "cq-small", "cq-src"];
+    var CL_IDS = ["cl-label", "cl-title", "cl-1a", "cl-1b", "cl-2a", "cl-2b", "cl-3a", "cl-3b", "cl-4a", "cl-4b", "cl-end"];
+    var CN_IDS = ["cn-label", "cn-num", "cn-cap", "cn-b1", "cn-b2", "cn-b3", "cn-end"];
+    var LAYOUTS = ["照片金句", "文字對照", "大字金句", "清單卡", "數字卡", "保障卡"];
+    function layoutIds(l) { return l === "保障卡" ? CB_IDS : l === "文字對照" ? CP_IDS : l === "大字金句" ? CQ_IDS : l === "清單卡" ? CL_IDS : l === "數字卡" ? CN_IDS : []; }
+    function titleOf(l) {
+      if (l === "文字對照") return val("cp-lt") ? val("cp-lt") + " vs " + val("cp-rt") : "";
+      if (l === "大字金句") return parts(val("cq-quote"))[0] || "";
+      if (l === "清單卡") return parts(val("cl-title"))[0] || "";
+      if (l === "保障卡") return val("cb-title");
+      if (l === "數字卡") return val("cn-num") ? val("cn-num") + " " + (parts(val("cn-cap"))[0] || "") : "";
+      return "";
+    }
+    function drawCoverage() {
+      var W = 1080, H = 1920, P = PAL;
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      drawBg();
+      var label = val("cb-label");
+      if (label) { ctx.font = "400 26px " + FB; ctx.fillStyle = P.SOFT; spaced(label, 70, 240, 10, "left"); }
+      ctx.strokeStyle = P.CARDLINE; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(70, 270); ctx.lineTo(W - 70, 270); ctx.stroke();
+      var tt = val("cb-title"), ts = fitSize([tt], 900, 112, 60, W - 140, 0);
+      ctx.font = "900 " + ts + "px " + FB; ctx.fillStyle = P.INK; ctx.shadowColor = "rgba(0,0,0,.10)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3; spaced(tt, 70, 420, 0, "left"); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+      var sb = val("cb-sub"); if (sb) { ctx.font = "400 34px " + FB; ctx.fillStyle = P.SOFT; spaced(sb, 70, 500, 5, "left"); }
+      // stat card
+      var cy = 620, ch = 350;
+      ctx.shadowColor = "rgba(120,80,50,.14)"; ctx.shadowBlur = 28; ctx.shadowOffsetY = 10; rr(46, cy, W - 92, ch, 34); ctx.fillStyle = P.CARD; ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+      ctx.strokeStyle = P.CARDLINE; ctx.lineWidth = 2.5; rr(46, cy, W - 92, ch, 34); ctx.stroke();
+      ctx.font = "500 32px " + FB; ctx.fillStyle = P.SOFT; spaced(val("cb-l1"), 100, cy + 78, 3, "left"); spaced(val("cb-r1"), 600, cy + 78, 3, "left");
+      var v1 = val("cb-l2"), v2 = val("cb-r2"), vs = Math.min(fitSize([v1], 600, 88, 44, 380, 0), fitSize([v2], 600, 88, 44, 380, 0));
+      ctx.font = "600 " + vs + "px " + FB; ctx.fillStyle = P.INK; spaced(v1, 100, cy + 200, 0, "left"); ctx.fillStyle = P.ACC; spaced(v2, 600, cy + 200, 0, "left");
+      ctx.strokeStyle = P.LINE; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(558, cy + 34); ctx.lineTo(558, cy + 226); ctx.moveTo(100, cy + 252); ctx.lineTo(W - 100, cy + 252); ctx.stroke();
+      var note = val("cb-note"); if (note) { ctx.font = "400 32px " + FB; ctx.fillStyle = P.SOFT; spaced(note, W / 2, cy + 313, 5, "center"); }
+      // rows card
+      var ry = cy + ch + 44, rows = [1, 2, 3].filter(function (i) { return val("cb-" + i + "a"); }), rh = 140, hh = val("cb-h") ? 88 : 0, bh = hh + rows.length * rh + 40;
+      if (rows.length) {
+        ctx.shadowColor = "rgba(120,80,50,.12)"; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8; rr(46, ry, W - 92, bh, 34); ctx.fillStyle = P.CARD; ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+        ctx.strokeStyle = P.CARDLINE; ctx.lineWidth = 2.5; rr(46, ry, W - 92, bh, 34); ctx.stroke();
+        var y = ry + 20;
+        if (hh) { ctx.font = "600 30px " + FB; ctx.fillStyle = P.ACC; spaced(val("cb-h"), 100, y + 58, 6, "left"); y += hh; }
+        rows.forEach(function (i, k) {
+          if (k > 0 || hh) { ctx.strokeStyle = P.LINE; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(100, y); ctx.lineTo(W - 100, y); ctx.stroke(); }
+          var a = val("cb-" + i + "a"), b = val("cb-" + i + "b"), as = fitSize([a], 600, 42, 28, 250, 1);
+          ctx.font = "600 " + as + "px " + FB; ctx.fillStyle = P.INK; spaced(a, 100, y + 84, 1, "left");
+          var bs = fitSize([b], 400, 34, 22, 540, 1); ctx.font = "400 " + bs + "px " + FB; ctx.fillStyle = P.SOFT; spaced(b, 380, y + 82, 1, "left");
+          y += rh;
+        });
+      }
+      var cta = val("cb-cta"); if (cta) { ctx.font = "600 36px " + FB; ctx.fillStyle = P.ACC; spaced(cta, W / 2, ry + bh + 84, 4, "center"); }
+      ctx.strokeStyle = P.CARDLINE; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(70, 1750); ctx.lineTo(W - 70, 1750); ctx.stroke();
+      var ft = parts(val("cb-foot")).slice(0, 3); ctx.font = "400 24px " + FB; ctx.fillStyle = P.MUTE; ft.forEach(function (t, k) { spaced(t, W / 2, 1800 + k * 40, 2, "center"); });
+      ctx.restore();
+    }
+    function drawText() {
+      var l = curLayout();
+      if (l === "保障卡") return drawCoverage();
+      if (l === "文字對照") return drawCompare();
+      var W = 1080, H = 1920, L = 76, INK = PAL.INK, MUTE = PAL.MUTE, SOFT = PAL.SOFT, ACC = PAL.ACC, LINE = PAL.LINE;
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      drawBg();
+      var label = l === "大字金句" ? val("cq-label") : l === "清單卡" ? val("cl-label") : val("cn-label");
+      if (label) { ctx.font = "400 26px " + FB; ctx.fillStyle = MUTE; spaced(label, L, 262, 7, "left"); }
+      var yEnd = 0;
+      if (l === "大字金句") {
+        var q = parts(val("cq-quote")).slice(0, 4), sm = parts(val("cq-small")).slice(0, 3), src = val("cq-src");
+        var sz = fitSize(q, 600, 58, 36, W - L * 2, 3), lh = sz * 1.7;
+        var total = q.length * lh + (sm.length ? 110 + sm.length * 58 : 60) + (src ? 70 : 0);
+        var y0 = Math.max(560, (H - total) / 2 - 10) + sz * 0.9;
+        ctx.font = "900 200px Georgia, \"Times New Roman\", serif"; ctx.fillStyle = "rgba(176,72,106,.2)"; ctx.fillText("“", L - 4, y0 - sz * 0.8);
+        ctx.font = "600 " + sz + "px " + FB;
+        q.forEach(function (t, k) { ctx.fillStyle = k === q.length - 1 ? ACC : INK; spaced(t, L, y0 + k * lh, 3, "left"); });
+        var y = y0 + (q.length - 1) * lh + 50; ctx.fillStyle = ACC; ctx.fillRect(L, y, W - L * 2, 3);
+        y += 74; ctx.font = "400 26px " + FB; ctx.fillStyle = SOFT; sm.forEach(function (t, k) { spaced(t, L, y + k * 50, 2, "left"); });
+        y += sm.length * 50 + 14;
+        if (src) { ctx.font = "400 22px " + FB; ctx.fillStyle = MUTE; spaced("—— " + src, W - L, y + 20, 2, "right"); }
+      } else if (l === "清單卡") {
+        var tt = parts(val("cl-title")).slice(0, 2), ts = fitSize(tt, 600, 72, 44, W - L * 2, 2);
+        ctx.font = "600 " + ts + "px " + FB; ctx.fillStyle = INK; tt.forEach(function (t, k) { spaced(t, L, 460 + k * ts * 1.35, 2, "left"); });
+        var ycur = 460 + (tt.length - 1) * ts * 1.35 + 60; ctx.fillStyle = ACC; ctx.fillRect(L, ycur, W - L * 2, 3); ycur += 90;
+        ctx.strokeStyle = LINE; ctx.lineWidth = 2;
+        for (var i = 1; i <= 4; i++) {
+          var a = val("cl-" + i + "a"), b = val("cl-" + i + "b"); if (!a) continue;
+          ctx.font = "italic 400 40px " + FB; ctx.fillStyle = ACC; ctx.fillText("0" + i, L, ycur + 52);
+          var as = fitSize([a], 600, 50, 30, W - L - 120 - L, 1); ctx.font = "600 " + as + "px " + FB; ctx.fillStyle = INK; spaced(a, L + 110, ycur + 52, 1, "left");
+          if (b) { var bs = fitSize([b], 400, 30, 20, W - L - 110 - L, 1.5); ctx.font = "400 " + bs + "px " + FB; ctx.fillStyle = MUTE; spaced(b, L + 110, ycur + 116, 1.5, "left"); }
+          var rh = b ? 190 : 190; ctx.beginPath(); ctx.moveTo(L, ycur + rh - 28); ctx.lineTo(W - L, ycur + rh - 28); ctx.stroke(); ycur += rh;
+        }
+        yEnd = ycur;
+        var en = parts(val("cl-end")).slice(0, 2);
+        if (en.length) { var es = fitSize(en, 600, 54, 30, W - L * 2, 2); ctx.font = "600 " + es + "px " + FB; var ey = yEnd + 110; en.forEach(function (t, k) { ctx.fillStyle = k === en.length - 1 ? ACC : INK; spaced(t, L, ey + k * es * 1.5, 2, "left"); }); }
+      } else {
+        var num = val("cn-num"), nsz = fitSize([num], 600, 280, 110, W - L * 2, 0);
+        ctx.font = "600 " + nsz + "px " + FB; ctx.fillStyle = ACC; spaced(num, L, 640, 0, "left");
+        var cap = parts(val("cn-cap")).slice(0, 2); ctx.font = "600 56px " + FB; ctx.fillStyle = INK; cap.forEach(function (t, k) { spaced(t, L, 780 + k * 84, 2, "left"); });
+        var yb = 780 + (cap.length - 1) * 84 + 70; ctx.fillStyle = ACC; ctx.fillRect(L, yb, W - L * 2, 3); yb += 110;
+        ctx.font = "400 42px " + FB;
+        [1, 2, 3].forEach(function (k) { var t = val("cn-b" + k); if (!t) return; ctx.fillStyle = ACC; ctx.beginPath(); ctx.arc(L + 12, yb - 16, 10, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = INK; spaced(t, L + 52, yb, 2, "left"); yb += 96; });
+        var en2 = parts(val("cn-end")).slice(0, 2);
+        if (en2.length) { ctx.font = "600 52px " + FB; var ey2 = yb + 60; en2.forEach(function (t, k) { ctx.fillStyle = k === en2.length - 1 ? ACC : INK; spaced(t, L, ey2 + k * 76, 2, "left"); }); }
+      }
+      var hd = val("st-handle"); if (hd) { ctx.font = "italic 300 24px " + FB; ctx.fillStyle = MUTE; ctx.textAlign = "right"; ctx.fillText(hd, W - 66, 1870); ctx.textAlign = "left"; }
+      ctx.restore();
+    }
+    function ensureFonts() {
+      var all = (val("st-big") + val("st-small") + val("st-src") + val("st-handle") + layoutIds(curLayout()).map(function (i) { var e = document.getElementById(i); return e ? e.value : ""; }).join("")).replace(/\s/g, "") + "—vs0123";
+      if (!document.fonts || !document.fonts.load) return Promise.resolve();
+      return Promise.all([document.fonts.load("900 130px " + FB, all), document.fonts.load("500 44px " + FB, all), document.fonts.load("300 28px " + FB, all), document.fonts.load("400 28px " + FB, all), document.fonts.load("600 44px " + FB, all), document.fonts.load("italic 400 28px " + FB, "vs0123"), document.fonts.load("italic 300 26px " + FB, "@arielchiao_588")]).catch(function () {});
+    }
+    function redraw() { clearTimeout(timer); timer = setTimeout(function () { ensureFonts().then(draw); }, 120); }
+    function setPhoto(src, id, name) {
+      loadImg(src).then(function (im) { cur.img = im; cur.photoId = id || null; cur.photoName = name || ""; markSel(); redraw(); }, function () { toast("這張照片打不開"); });
+    }
+    function markSel() {
+      Array.prototype.forEach.call(photoGrid.children, function (c) { c.classList.toggle("sel", !!cur.photoId && c.dataset.id === cur.photoId); });
+    }
+
+    /* ----- layout ----- */
+    var ctl = h("div", { class: "stack" });
+    $main.appendChild(h("div", { class: "stack" },
+      h("div", { class: "row", style: "align-items:flex-end" },
+        h("div", null, h("h2", { text: "今天可以直接發的限動" }), h("p", { class: "lead", style: "margin:0", text: "圖已經配好照片、做好字。按「下載圖」存到手機，按「複製文字」貼進限動或內文。主軸：女人要有自己的選擇權、愛理財，也玩得開心。" })),
+        h("div", { class: "stack", style: "gap:6px;align-items:flex-end" }, reqBtn, reqNote)),
+      works,
+      h("section", { class: "card", id: "st-maker" }, h("h3", { text: "自己做一張（選照片、填句子，或用文字對照版型）" }), h("div", { class: "maker" }, h("div", { class: "pv" }, cvs), ctl)),
+      h("section", { class: "card" },
+        h("h3", { text: "版型規則（沿用妞的限動）" }),
+        h("dl", { class: "kv" },
+          h("dt", { text: "畫面" }), h("dd", { text: "照片滿版，只放大標加小字，小字靠左，大標與小字的間距等於行距，暗調暖光" }),
+          h("dt", { text: "署名" }), h("dd", { text: "右上角放 @arielchiao_588" }),
+          h("dt", { text: "句子" }), h("dd", { text: "另外寫的金句，或大家都看過的電影台詞，片名靠右，前面加長破折號" }))),
+      h("h3", { style: "margin:0", text: "金句清單" }), qlist,
+      h("h3", { style: "margin:0", text: "她喜歡的限動排版（從靈感收件匣來）" }), refs));
+
+    ctl.appendChild(h("div", null, h("div", { class: "label", text: "版型" }), h("div", { style: "margin-top:8px;max-width:260px" }, select("st-layout", LAYOUTS))));
+    ctl.appendChild(h("div", { id: "st-photo-panel" }, h("div", { class: "label", text: "1　選照片" }), kindBar, photoGrid,
+      h("div", { class: "actions", style: "margin-top:8px" },
+        h("input", { id: "st-file", type: "file", accept: "image/*", style: "display:none", onchange: function () {
+          var f = this.files && this.files[0]; this.value = ""; if (!f) return;
+          var url = URL.createObjectURL(f); setPhoto(url, null, f.name);
+          if (S.assets && S.db) {
+            uploadBlob(f).then(function (r) { return S.db.collection("photos").add({ id: r.id, name: f.name.replace(/\.[^.]+$/, ""), kind: "上傳", createdAt: new Date().toISOString() }).then(function () { cur.photoId = r.id; markSel(); toast("照片已存進照片庫"); }); }, function () {});
+          } else toast("先用這張出圖；要存進照片庫需要編輯權限");
+        } }),
+        h("button", { class: "btn ghost sm", type: "button", text: "上傳我的照片", onclick: function () { document.getElementById("st-file").click(); } }))));
+    ctl.appendChild(h("div", { id: "st-text-panel" }, h("div", { class: "label", text: "2　填句子" }), h("div", { class: "form", style: "margin-top:8px" },
+      field("st-big", "大標（一行一句，最多 3 行）", h("textarea", { id: "st-big", style: "min-height:96px", placeholder: "決定我們是怎樣的人\n是我們的選擇\n不是我們的能力" }), "wide"),
+      field("st-small", "小字（最多 3 行，第一行是朋友口吻）", h("textarea", { id: "st-small", style: "min-height:84px", placeholder: "錢怎麼花、日子怎麼過\n選擇權，自己留著" }), "wide"),
+      field("st-src", "片名或出處（不用打破折號）", input("st-src", "text", "哈利波特：消失的密室")),
+      field("st-handle", "右上角帳號", input("st-handle", "text", "@arielchiao_588")),
+      field("st-top", "文字位置（越大越下面）", h("input", { id: "st-top", type: "range", min: "4", max: "80", value: "8" })),
+      field("st-align", "小字對齊", select("st-align", ["靠左", "置中"])))));
+    ctl.appendChild(h("div", null, h("div", { class: "label", text: "3　出圖" }),
+      h("div", { class: "actions", style: "margin-top:8px" },
+        h("button", { class: "btn", type: "button", text: "下載圖片", onclick: download }),
+        h("button", { class: "btn ghost", type: "button", text: "存成作品", onclick: function () { saveWork(null); } }),
+        h("span", { id: "st-hint", class: "small muted" }))));
+    var cpRows = [];
+    [1, 2, 3].forEach(function (i) {
+      cpRows.push(field("cp-r" + i + "a", "第 " + i + " 列　左邊大標", input("cp-r" + i + "a", "text", "最多兩行，用「／」換行")), field("cp-r" + i + "b", "左邊說明", input("cp-r" + i + "b", "text")),
+        field("cp-r" + i + "c", "第 " + i + " 列　右邊大標", input("cp-r" + i + "c", "text")), field("cp-r" + i + "d", "右邊說明", input("cp-r" + i + "d", "text")));
+    });
+    ctl.appendChild(h("div", { id: "st-cmp-panel", hidden: true }, h("div", { class: "label", text: "填對照內容（想換行就打「／」）" }),
+      h("div", { class: "form", style: "margin-top:8px" },
+        field("cp-label", "小抬頭（左上角）", input("cp-label", "text", "薪水分配")),
+        field("cp-lt", "左欄大標", input("cp-lt", "text", "先花再存")), field("cp-ls", "左欄副標", input("cp-ls", "text", "靠意志力")),
+        field("cp-rt", "右欄大標", input("cp-rt", "text", "先分配再花")), field("cp-rs", "右欄副標", input("cp-rs", "text", "讓錢自己到位")),
+        cpRows,
+        field("cp-end", "結尾金句（最多 3 行，最後一行是粉紅色）", h("textarea", { id: "cp-end", style: "min-height:96px" }), "wide"))));
+    function pf(id, label, ph, wide) { return field(id, label, input(id, "text", ph || ""), wide); }
+    var cqPanel = h("div", { id: "st-cq-panel", hidden: true }, h("div", { class: "label", text: "填大字金句（想換行就打「／」）" }), h("div", { class: "form", style: "margin-top:8px" },
+      pf("cq-label", "小抬頭", "選擇權"), pf("cq-src", "片名或出處", "哈利波特：消失的密室"),
+      field("cq-quote", "金句（最多 4 行，最後一行是粉紅色）", h("textarea", { id: "cq-quote", style: "min-height:110px" }), "wide"),
+      field("cq-small", "小字（最多 3 行，朋友口吻）", h("textarea", { id: "cq-small", style: "min-height:84px" }), "wide")));
+    var clRows = []; [1, 2, 3, 4].forEach(function (i) { clRows.push(pf("cl-" + i + "a", "第 " + i + " 項（標題）"), pf("cl-" + i + "b", "第 " + i + " 項（說明，選填）")); });
+    var clPanel = h("div", { id: "st-cl-panel", hidden: true }, h("div", { class: "label", text: "填清單（最多 4 項）" }), h("div", { class: "form", style: "margin-top:8px" },
+      pf("cl-label", "小抬頭", "薪水一入帳"), field("cl-title", "標題（最多 2 行）", h("textarea", { id: "cl-title", style: "min-height:70px" }), "wide"), clRows,
+      field("cl-end", "結尾（最多 2 行，最後一行粉紅）", h("textarea", { id: "cl-end", style: "min-height:70px" }), "wide")));
+    var cnPanel = h("div", { id: "st-cn-panel", hidden: true }, h("div", { class: "label", text: "填數字卡" }), h("div", { class: "form", style: "margin-top:8px" },
+      pf("cn-label", "小抬頭", "631"), pf("cn-num", "大數字", "108,000"),
+      field("cn-cap", "數字說明（最多 2 行，用「／」換行）", h("textarea", { id: "cn-cap", style: "min-height:70px" }), "wide"),
+      pf("cn-b1", "重點 1"), pf("cn-b2", "重點 2"), pf("cn-b3", "重點 3"),
+      field("cn-end", "結尾（最多 2 行，最後一行粉紅）", h("textarea", { id: "cn-end", style: "min-height:70px" }), "wide")));
+    ctl.appendChild(cqPanel); ctl.appendChild(clPanel); ctl.appendChild(cnPanel);
+    function pf2(id, label, ph) { return field(id, label, input(id, "text", ph || "")); }
+    var cbPanel = h("div", { id: "st-cb-panel", hidden: true }, h("div", { class: "label", text: "填保險資訊卡" }), h("div", { class: "form", style: "margin-top:8px" },
+      pf2("cb-label", "小抬頭", "我的保障清單"), pf2("cb-title", "大標", "保單健檢的重點"), pf2("cb-sub", "副標", "讓保障，成為你的底氣。"),
+      pf2("cb-l1", "左格標籤", "檢查問題"), pf2("cb-l2", "左格數字", "5 題"), pf2("cb-r1", "右格標籤", "紅燈訊號"), pf2("cb-r2", "右格數字（粉紅）", "3 個"), pf2("cb-note", "卡片底部一行", "1 頁就能對完"),
+      pf2("cb-h", "下方清單小標", "先顧這三件事"),
+      pf2("cb-1a", "第 1 列　左", "醫療"), pf2("cb-1b", "第 1 列　右", "病了，醫藥費有人付"), pf2("cb-2a", "第 2 列　左", "失能"), pf2("cb-2b", "第 2 列　右", "不能工作時，生活有著落"), pf2("cb-3a", "第 3 列　左", "意外"), pf2("cb-3b", "第 3 列　右", "事故來了，不用自己扛"),
+      pf2("cb-cta", "行動呼籲", "留言「檢查」，檢查表私訊給你"),
+      field("cb-foot", "底部小字（法遵提醒，最多 3 行）", h("textarea", { id: "cb-foot", style: "min-height:70px" }), "wide")));
+    ctl.appendChild(cbPanel); setVal("cb-foot", "本資訊僅供參考，不構成保險契約或要約／實際保障內容，以保單條款為準");
+
+    function togglePanels() { var l = curLayout(), c = isCmp(); document.getElementById("st-photo-panel").hidden = c; document.getElementById("st-text-panel").hidden = c; document.getElementById("st-cmp-panel").hidden = l !== "文字對照"; document.getElementById("st-cq-panel").hidden = l !== "大字金句"; document.getElementById("st-cl-panel").hidden = l !== "清單卡"; document.getElementById("st-cn-panel").hidden = l !== "數字卡"; document.getElementById("st-cb-panel").hidden = l !== "保障卡"; }
+    ctl.addEventListener("input", redraw);
+    ctl.addEventListener("change", function () { togglePanels(); redraw(); });
+    setVal("st-handle", "@arielchiao_588"); setVal("st-top", "8");
+    ["st-big", "st-small", "st-src", "st-handle", "st-top", "st-align"].forEach(function (id) {
+      var el = document.getElementById(id); el.addEventListener("input", redraw); el.addEventListener("change", redraw);
+    });
+
+    function blobOf() { return new Promise(function (res, rej) { try { cvs.toBlob(function (b) { b ? res(b) : rej(new Error("blob")); }, "image/png"); } catch (e) { rej(e); } }); }
+    function nextName() {
+      var t = new Date(), d = today(), dlN = (nextName.n = (nextName.n || 0) + 1);
+      return "限動_" + d + "_" + pad(t.getHours()) + pad(t.getMinutes()) + pad(t.getSeconds()) + "_" + dlN + ".png";
+    }
+    function download() {
+      if (!isCmp() && !cur.img) { toast("先選一張照片"); return; }
+      if (!isCmp() && !lines("st-big", 3).length) { toast("先填大標"); return; }
+      if (isCmp() && !titleOf(curLayout())) { toast("先填標題或金句"); return; }
+      if (!S.dl) { toast("這個畫面不能下載，請用「存成作品」，再從作品下載"); return; }
+      blobOf().then(function (b) { return S.dl.save({ filename: nextName(), data: b }); }).then(function () { toast("已下載"); }, function (e) { if (e && e.code === "declined") return; toast("下載失敗，請再試一次"); });
+    }
+    function saveWork(dateStr) {
+      if (!guard()) return;
+      if (!isCmp() && !cur.img) { toast("先選一張照片"); return; }
+      var lay = curLayout(), big = isCmp() ? [titleOf(lay)] : lines("st-big", 3); if (!big.length || !big[0]) { toast("先填標題或大標"); return; }
+      var cmpData = {}; layoutIds(lay).forEach(function (i) { cmpData[i] = document.getElementById(i).value; });
+      var hint = document.getElementById("st-hint"); hint.textContent = "存檔中⋯";
+      blobOf().then(function (b) { return uploadBlob(b, "image/png"); }).then(function (r) {
+        var o = { layout: lay, cmp: cmpData, big: big, small: isCmp() ? [] : lines("st-small", 3), source: val("st-src"), handle: val("st-handle"), top: Number(val("st-top")) || 0, align: val("st-align"), photoId: cur.photoId || null, imageId: r.id, createdAt: new Date().toISOString(), by: S.uid || null };
+        return S.db.collection("stories").add(o).then(function () { hint.textContent = ""; toast("已存成作品"); });
+      }).then(null, function (e) { hint.textContent = ""; if (!(e && e.message === "noassets")) fail(e); });
+    }
+    function loadWork(w) {
+      setVal("st-layout", w.layout || "照片金句"); togglePanels();
+      if (w.layout && w.layout !== "照片金句") { layoutIds(w.layout).forEach(function (i) { setVal(i, (w.cmp || {})[i] || ""); }); setVal("st-handle", w.handle || "@arielchiao_588"); redraw(); cvs.scrollIntoView({ behavior: "smooth", block: "nearest" }); return; }
+      setVal("st-big", (w.big || []).join("\n")); setVal("st-small", (w.small || []).join("\n")); setVal("st-src", w.source || "");
+      setVal("st-handle", w.handle || "@arielchiao_588"); setVal("st-top", w.top != null ? w.top : 8); setVal("st-align", w.align || "靠左");
+      if (w.photoId) setPhoto(bu(w.photoId), w.photoId, ""); else redraw();
+      cvs.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function drawPhotos() {
+      var kinds = ["全部", "背景", "巧巧", "上傳"];
+      kindBar.textContent = "";
+      kinds.forEach(function (k) { kindBar.appendChild(h("button", { type: "button", class: "btn sm " + (photoKind === k ? "" : "ghost"), text: k, onclick: function () { photoKind = k; drawPhotos(); } })); });
+      photoGrid.textContent = "";
+      var ps = S.photos.filter(function (p) { return photoKind === "全部" || p.kind === photoKind; });
+      if (!ps.length) photoGrid.appendChild(h("div", { class: "small muted", style: "grid-column:1/-1", text: "這個分類還沒有照片，可以用下面的按鈕上傳。" }));
+      ps.forEach(function (p) {
+        photoGrid.appendChild(h("button", { type: "button", class: "ph", "data-id": p.id, title: p.name || "", onclick: function () { setPhoto(bu(p.id), p.id, p.name); } }, h("img", { src: bu(p.id), alt: p.name || "", loading: "lazy" })));
+      });
+      markSel();
+    }
+    function labelOf(w) { return w.layout && w.layout !== "照片金句" ? w.layout + ((w.cmp && w.cmp["cq-src"]) ? "（" + w.cmp["cq-src"] + "）" : "") : (w.source ? "電影金句（" + w.source + "）" : "原創金句"); }
+    function copyTextOf(w) {
+      if (w.layout && w.layout !== "照片金句") {
+        var c = w.cmp || {};
+        return layoutIds(w.layout).map(function (i) { return c[i]; }).filter(Boolean).map(function (t) { return String(t).replace(/／/g, "\n"); }).join("\n");
+      }
+      return (w.big || []).concat(w.small || []).join("\n") + (w.source ? "\n—— " + w.source : "");
+    }
+    function setTaste(w, v) {
+      if (!guard()) return;
+      var nv = w.taste === v ? null : v;
+      S.db.doc("stories/" + w.id).update({ taste: nv }).then(function () { w.taste = nv; refresh(); toast(nv ? "已記錄：" + (nv === "like" ? "喜歡" : nv === "ok" ? "還好" : "不喜歡") : "已取消"); }, fail);
+    }
+    function openInlineEdit(w, card, imgEl) {
+      var old = card.querySelector(".inedit");
+      if (old) { old.remove(); imgEl.src = bu(w.imageId); return; }
+      var isPhoto = !w.layout || w.layout === "照片金句";
+      if (!isPhoto) { loadWork(w); toast("這個版型請往下到「自己做一張」改字，改好按「存成作品」"); return; }
+      if (!w.photoId) { loadWork(w); toast("這張沒有綁原照片，請往下選一張照片再出圖"); return; }
+      var big = h("textarea", { style: "min-height:84px" }), small = h("textarea", { style: "min-height:84px" }), src = h("input", { type: "text", placeholder: "片名或出處（選填）" });
+      big.value = (w.big || []).join("\n"); small.value = (w.small || []).join("\n"); src.value = w.source || "";
+      var stat = h("div", { class: "small muted", text: "載入照片⋯" }), lastB = null, tm = null, ready = false;
+      function render() {
+        if (!ready) return Promise.resolve(null);
+        setVal("st-layout", "照片金句"); togglePanels();
+        setVal("st-big", big.value); setVal("st-small", small.value); setVal("st-src", src.value);
+        setVal("st-handle", w.handle || "@arielchiao_588"); setVal("st-top", w.top != null ? w.top : 8); setVal("st-align", w.align || "靠左");
+        return ensureFonts().then(draw).then(blobOf).then(function (b) { lastB = b; imgEl.src = URL.createObjectURL(b); stat.textContent = "預覽已更新，滿意就按「換成新字」"; return b; });
+      }
+      function later() { clearTimeout(tm); tm = setTimeout(render, 350); }
+      [big, small, src].forEach(function (e) { e.addEventListener("input", later); });
+      var box = h("div", { class: "inedit stack", style: "gap:8px;margin-top:10px" },
+        h("div", { class: "label", text: "大標（一行一句，最多 3 行）" }), big,
+        h("div", { class: "label", text: "小字（最多 3 行）" }), small,
+        h("div", { class: "label", text: "出處" }), src, stat,
+        h("div", { class: "actions" },
+          h("button", { class: "btn sm", type: "button", text: "換成新字", onclick: function () {
+            if (!guard()) return;
+            stat.textContent = "存檔中⋯";
+            render().then(function (b) { return uploadBlob(b || lastB, "image/png"); }).then(function (r) {
+              return S.db.doc("stories/" + w.id).update({ imageId: r.id, big: lines("st-big", 3), small: lines("st-small", 3), source: val("st-src") });
+            }).then(function () { toast("已換成新字"); }, function (e) { stat.textContent = ""; if (!(e && e.message === "noassets")) fail(e); });
+          } }),
+          h("button", { class: "btn ghost sm", type: "button", text: "下載這張", onclick: function () {
+            if (!S.dl) { toast("這個畫面不能下載"); return; }
+            render().then(function (b) { return S.dl.save({ filename: nextName(), data: b || lastB }); }).then(function () { toast("已下載"); }, function (e) { if (e && e.code === "declined") return; toast("下載失敗"); });
+          } }),
+          h("button", { class: "btn ghost sm", type: "button", text: "取消", onclick: function () { box.remove(); imgEl.src = bu(w.imageId); } })));
+      card.appendChild(box);
+      loadImg(bu(w.photoId)).then(function (im) { cur.img = im; cur.photoId = w.photoId; markSel(); ready = true; stat.textContent = "改字後會即時預覽"; }, function () { stat.textContent = "原照片打不開，請往下選一張照片"; });
+    }
+    function workCard(w) {
+      var posted = w.posted;
+      var del = h("button", { class: "btn ghost danger sm", type: "button", text: "刪除" });
+      armDelete(del, function () { if (guard()) S.db.doc("stories/" + w.id).delete().then(function () { S.stories = S.stories.filter(function (x) { return x.id !== w.id; }); refresh(); toast("已刪除"); }, fail); });
+      function tb(v, ch, tip) { return h("button", { type: "button", class: "tb" + (w.taste === v ? " on" : ""), title: tip, "aria-label": tip, "aria-pressed": w.taste === v ? "true" : "false", text: ch, onclick: function () { setTaste(w, v); } }); }
+      var imgEl = h("img", { src: bu(w.imageId), alt: (w.big || []).join(" "), loading: "lazy", onclick: function () { lightbox(imgEl.src); } });
+      var card = h("article", { class: "card work" },
+        imgEl,
+        h("div", { class: "small muted", text: labelOf(w) }),
+        h("div", { class: "actions" },
+          h("button", { class: "btn sm", type: "button", text: "下載圖", onclick: function () {
+            if (!S.dl) { toast("這個畫面不能下載"); return; }
+            fetch(bu(w.imageId)).then(function (r) { return r.blob(); }).then(function (b) { return S.dl.save({ filename: nextName(), data: b }); }).then(function () { toast("已下載"); }, function (e) { if (e && e.code === "declined") return; toast("下載失敗"); });
+          } }),
+          h("button", { class: "btn ghost sm", type: "button", text: "複製文字", onclick: function (ev) { var b = ev.currentTarget, o = "複製文字"; copy(copyTextOf(w)); b.textContent = "已複製 ✓"; setTimeout(function () { b.textContent = o; }, 2000); } }),
+          h("button", { class: "btn ghost sm" + (posted ? " on" : ""), type: "button", text: posted ? "已發 " + md(posted) : "今天發了", onclick: function () { if (!guard()) return; var np = posted ? null : today(); S.db.doc("stories/" + w.id).update({ posted: np }).then(function () { w.posted = np; refresh(); toast(np ? "已記錄：今天發了" : "已取消"); }, fail); } })),
+        h("div", { class: "actions" },
+          h("button", { class: "btn ghost sm", type: "button", text: "改字", onclick: function () { openInlineEdit(w, card, imgEl); } }),
+          tb("like", "○", "喜歡"), tb("ok", "△", "還好"), tb("no", "×", "不喜歡"), del),
+        null);
+      return card;
+    }
+    function sec(title, sub, list) {
+      if (!list.length) return null;
+      return h("section", { class: "card" }, h("div", { class: "row", style: "margin-bottom:12px" }, h("div", null, h("h3", { style: "margin:0", text: title }), sub ? h("div", { class: "small muted", text: sub }) : null), h("span", { class: "small muted", text: list.length + " 張" })),
+        h("div", { class: "wgrid" }, list.map(workCard)));
+    }
+    function drawWorks() {
+      works.textContent = "";
+      var td = today(), tm = I(new Date(P(td).getTime() + 864e5)), t2 = I(new Date(P(td).getTime() + 2 * 864e5));
+      function bd(w) { return w.batch || (w.createdAt || "").slice(0, 10); }
+      var ws = S.stories.slice().sort(function (a, b) { return (a.createdAt || "") < (b.createdAt || "") ? 1 : -1; });
+      var picked = ws.filter(function (w) { return w.taste === "like" && !w.posted; });
+      var isPicked = {}; picked.forEach(function (w) { isPicked[w.id] = 1; });
+      var open = ws.filter(function (w) { return !w.posted && !w.taste; });
+      var seen = {}; open.forEach(function (w) { seen[bd(w)] = 1; });
+      var days = Object.keys(seen).sort();
+      var pend = S.requests.filter(function (r) { return r.status === "待做"; }).length;
+      reqNote.textContent = pend ? "已送出 " + pend + " 個請求，等 Claude 處理" : "";
+      if (!ws.length) { works.appendChild(h("div", { class: "empty", text: "還沒有作品。往下「自己做一張」，或按右上「請 Nora 出新的一批」。" })); return; }
+      var secs = [];
+      days.filter(function (d) { return d >= td; }).forEach(function (d) {
+        secs.push(sec(d === td ? "今天" : d === tm ? "明天" : d === t2 ? "後天" : "之後", "", open.filter(function (w) { return bd(w) === d; }).slice().reverse()));
+      });
+      secs.push(sec("之前做的", "", open.filter(function (w) { return bd(w) < td; })));
+      secs.push(sec("已發布", "", ws.filter(function (w) { return w.posted; })));
+      secs.push(sec("已按過 ○△×（收在最下面，再按一次同個符號可還原）", "", ws.filter(function (w) { return !w.posted && w.taste; })));
+      secs.forEach(function (x) { if (x) works.appendChild(x); });
+    }
+    function drawQuotes() {
+      qlist.textContent = "";
+      if (!S.quotes.length) qlist.appendChild(h("div", { class: "empty", style: "grid-column:1/-1", text: "還沒有金句。" }));
+      S.quotes.slice().sort(function (a, b) { return (a.createdAt || "") < (b.createdAt || "") ? 1 : -1; }).forEach(function (q) {
+        var del = h("button", { class: "btn ghost danger sm", type: "button", text: "刪除" });
+        armDelete(del, function () { if (guard()) S.db.doc("quotes/" + q.id).delete().then(function () { toast("已刪除"); }, fail); });
+        qlist.appendChild(h("article", { class: "card idea" }, h("div", { class: "txt", style: "font-family:var(--font-display);font-weight:600;font-size:17px", text: q.text }),
+          q.source ? h("div", { class: "small muted", text: q.source }) : null, q.note ? h("div", { class: "small", text: q.note }) : null,
+          h("div", { class: "actions" }, h("button", { class: "btn ghost sm", type: "button", text: "放進大標", onclick: function () { setVal("st-big", q.text); setVal("st-src", q.source || ""); redraw(); cvs.scrollIntoView({ behavior: "smooth", block: "nearest" }); } }), del)));
+      });
+      refs.textContent = "";
+      var r = S.ideas.filter(function (i) { return i.type === "限動排版"; });
+      if (!r.length) refs.appendChild(h("div", { class: "empty", style: "grid-column:1/-1", text: "到「靈感收件匣」把類型選「限動排版」，會出現在這裡。" }));
+      r.forEach(function (i) { refs.appendChild(h("article", { class: "card idea" }, h("div", { class: "txt", text: i.text || "" }), i.from ? h("div", { class: "small muted", text: i.from }) : null, i.url ? h("a", { href: i.url, target: "_blank", rel: "noopener", text: srcLabel(i.url) }) : null)); });
+    }
+    drawPhotos();
+    view.update = function () { drawPhotos(); drawWorks(); drawQuotes(); };
+    ensureFonts().then(function () { if (!cur.img && S.photos.length === 0) draw(); });
+  }
+
+  /* ---------- router ---------- */
+  var MOUNT = { overview: mountOverview, plan: mountPlan, calendar: mountCalendar, review: mountReview, ideas: mountIdeas, form: mountForm, story: mountStory };
+  function tabFromHash() {
+    var t = (location.hash || "").replace("#", "");
+    return MOUNT[t] ? t : "overview";
+  }
+  function renderTabs() {
+    var host = document.getElementById("tabs"); host.textContent = "";
+    TABS.forEach(function (t) { host.appendChild(h("a", { href: "#" + t[0], text: t[1], "aria-current": S.tab === t[0] ? "page" : null })); });
+  }
+  function go() {
+    S.tab = tabFromHash();
+    renderTabs();
+    $main.textContent = "";
+    view = { update: function () {} };
+    MOUNT[S.tab]();
+    view.update();
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", go);
+
+  /* ---------- data ---------- */
+  function anyLive() { for (var k in S.live) if (S.live[k]) return true; return false; }
+  function updateStat() {
+    var el = document.getElementById("dbstat"), bn = document.getElementById("banner"); if (!el) return;
+    var ok = anyLive();
+    el.textContent = "粉絲數每天 08:15 自動更新（台北時間）｜貼文 " + S.posts.length + "｜限動 " + S.stories.length + "｜上次更新 2026-11-25 16:13:08 台北時間"; bn.hidden = true; return;
+    if (ok) { bn.hidden = true; return; }
+    bn.hidden = false; bn.textContent = "";
+    bn.appendChild(h("div", null, h("b", { text: "目前顯示的是預覽內容，還不能存檔。" }), h("div", { class: "small", text: "要能存檔、按喜好、排進月曆，需要你允許這個頁面使用「資料庫」。按右邊的「允許」；如果沒有跳出視窗，再按「開啟權限設定」。" })));
+    bn.appendChild(h("div", { class: "actions" },
+      h("button", { class: "btn sm", type: "button", text: "允許", onclick: function () { askPerm(false); } }),
+      h("button", { class: "btn ghost sm", type: "button", text: "開啟權限設定", onclick: function () { askPerm(true); } }),
+      h("button", { class: "btn ghost sm", type: "button", text: "重新整理", onclick: function () { location.reload(); } })));
+  }
+  function askPerm(open) {
+    var pm = S.perm; if (!pm) { toast("這個畫面沒有權限設定，請改用電腦版 claude.ai 打開"); return; }
+    (open ? pm.manage() : pm.request()).then(function () { toast("已更新，請重新整理頁面"); setTimeout(function () { location.reload(); }, 800); }, function () { toast("沒能開啟權限視窗，請到頁面右上的權限選單設定"); });
+  }
+  function refresh() { updateStat(); try { view.update(); } catch (e) { if (window.console) console.error(e); } }
+  function useSnap() {
+    if (!SNAP) return;
+    ["posts", "ideas", "reviews", "followers", "quotes", "photos", "stories", "requests"].forEach(function (k) { if (SNAP[k]) S[k] = SNAP[k].slice(); });
+    if (SNAP.settings) S.cfgDoc = SNAP.settings;
+  }
+  function listen(name) {
+    S.db.collection(name).onSnapshot(function (q) {
+      if (q.metadata && q.metadata.fromCache && q.empty && !S.live[name]) return;
+      S[name] = q.docs.map(function (d) { var o = d.data() || {}; o.id = d.id; return o; });
+      S.live[name] = true; S.loaded[name] = true; refresh();
+    }, function (e) { S.errs.push(name + " " + ((e && e.code) || "error")); S.loaded[name] = true; updateStat(); });
+    try {
+      S.db.collection(name).get().then(function (q) {
+        if (q.empty) return;
+        S[name] = q.docs.map(function (d) { var o = d.data() || {}; o.id = d.id; return o; });
+        S.live[name] = true; S.loaded[name] = true; refresh();
+      }, function () {});
+    } catch (e) {}
+  }
+  useSnap();
+    ["posts", "ideas", "reviews", "followers", "quotes", "photos", "stories", "requests", "settings"].forEach(function (k) { S.live[k] = true; S.loaded[k] = true; });
+    S.canWrite = false;
+    var who = document.getElementById("who");
+    if (who) who.textContent = "線上頁，粉絲數每天自動更新";
+    go();
+    updateStat();
+  
+})();
+</script>
+
+</body></html>
